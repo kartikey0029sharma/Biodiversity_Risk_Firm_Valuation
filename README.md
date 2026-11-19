@@ -1,6 +1,6 @@
 # BRFV: Biodiversity Risk Disclosure and Firm Valuation
 
-Research project of Kartikey Sharma. Every project file carries the short code BRFV.
+ Every project file carries the short code BRFV.
 
 Question: is biodiversity risk, as US listed firms discuss it in their 10-K filings, reflected in firm valuation (Tobin's Q)?
 
