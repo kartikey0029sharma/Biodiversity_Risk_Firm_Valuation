@@ -10,7 +10,7 @@ Public repository: https://github.com/kartikey0029sharma/Biodiversity_Risk_Firm_
 
 | Version | File | What it is |
 | --- | --- | --- |
-| Version 2 (current) | 04_manuscript/draft_complete_v2/draft_complete_v2.pdf | The paper without the author name, the date, the acknowledgements and the declaration on the use of generative AI |
+| Version 2 (current) | 04_manuscript/draft_complete_v2/draft_complete_v2.pdf | The paper without the author name, the date, the acknowledgements and the declaration on the use of generative AI. It gives the link to this repository before the abstract |
 | Version 1 | 04_manuscript/draft_complete_v1/draft_complete_v1.pdf | The first complete draft of 19 November 2026, which carries those four items |
 
 The two versions have the same text, tables and figures from the abstract to the appendix. Each folder holds the LaTeX source beside the PDF. This is a working draft and it has not been peer reviewed.

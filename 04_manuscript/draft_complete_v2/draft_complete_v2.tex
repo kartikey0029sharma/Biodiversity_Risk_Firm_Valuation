@@ -32,7 +32,11 @@
 
 \begin{document}
 \maketitle
-\vspace{-3.5em} % no author and no date in this version, so the title block is closed up
+\vspace{-5em} % no author and no date in this version, so the title block is closed up
+\begin{center}
+{\small Code and replication files\\
+\url{https://github.com/kartikey0029sharma/Biodiversity_Risk_Firm_Valuation}}
+\end{center}
 
 \begin{abstract}
 \noindent This paper examines whether the stock market values firms differently when their annual reports discuss biodiversity risk. The study uses the three firm-level scores that \citet{giglio2026} derive from the text of 10-K filings. The first score records a substantive discussion of biodiversity, the second records the balance of negative over positive sentences, and the third records a discussion of biodiversity regulation. The scores of the previous fiscal year are matched to Compustat data for \nFinal{} firm-years of \nFirmsFinal{} non-financial firms incorporated in the United States, for fiscal years 2015 to 2024. A simple comparison shows that firms which discuss biodiversity have a much lower Tobin's Q. This gap disappears once firms are compared within the same industry group and year, and none of the three scores is then related to valuation. Within firms the picture is different for tone. A rise of one unit in the negative tone score is followed by a lower Tobin's Q, with a coefficient of \coefFAllNeg{}, which is about \effNegMean{} per cent of the sample mean. The discussion of regulation is associated with lower valuation only in fiscal years after the Kunming Declaration of October 2021, and only in the comparison with industry peers. The association does not differ between industries with high and low exposure. The evidence suggests that the market does not price the mere mention of biodiversity, while it responds to a worsening tone and, more recently, to regulatory content. A positive score is rare and persistent, so the within-firm estimates rest on fewer than two hundred firms and should be read with care.
@@ -118,6 +122,7 @@ Biodiversity risk also changes how firms manage liquidity. \citet{ahmad2024} fin
 
 \subsection{Research gap and hypotheses}
 
+\enlargethispage{\baselineskip}% keeps the last line of this paragraph on the same page
 The review leaves three matters open. First, to the best of the knowledge of the author, no study has entered the three 10-K scores side by side in a design with a one-year lag and with fixed effects chosen for a rare and persistent regressor. Such a design can show whether the transparency reading and the exposure reading hold at the same time. Second, the timing evidence of \citet{garel2024} concerns returns and a footprint measure. Whether the valuation of US firms responds more strongly to 10-K disclosure after October 2021 has not been tested with these scores, as far as the author is aware. Third, the statistical properties of the scores limit what can be identified, and a design that uses them has to state this openly.
 
 The hypotheses follow from the two readings of disclosure, which Figure~\ref{fig:framework} sets out. The Count score records that a firm discusses biodiversity at all. Under the exposure reading it should lower valuation, and under the transparency reading it should raise it. No sign is therefore predicted, and the coefficient is reported as a benchmark. The Negative score isolates filings that frame biodiversity as a threat, where the exposure reading should dominate.

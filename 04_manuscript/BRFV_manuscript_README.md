@@ -3,7 +3,8 @@
 ## Current draft
 
 draft_complete_v2 is the current draft. It has the text, tables and figures of draft_complete_v1 and leaves out the author name, the date,
-the acknowledgements and the declaration on the use of generative AI. Step 08 writes into this folder, because it is named as DRAFT_CURRENT
+the acknowledgements and the declaration on the use of generative AI. It gives the link to the public repository before the abstract.
+Step 08 writes into this folder, because it is named as DRAFT_CURRENT
 in 02_code/brfv_00_config.py. The file names were chosen by the author.
 
 | File | What it is |
@@ -26,7 +27,7 @@ The sentences that interpret the results do not, so read Sections 4 to 6 again a
 | --- | --- | --- |
 | Claude doc draft v1 | 2026-11-18 | Sections 1 to 3 and the score descriptives, written before the Compustat data arrived. No regression result. A private working document, superseded by draft_complete_v1 |
 | draft_complete_v1 | 2026-11-19 | Complete draft in LaTeX with all results, 13 tables in the text, 3 in the appendix and 6 figures |
-| draft_complete_v2 | 2026-11-19 | The same paper without the author name, the date, the acknowledgements and the declaration on the use of generative AI. No other change to the text, the tables or the figures |
+| draft_complete_v2 | 2026-11-19 | The same paper without the author name, the date, the acknowledgements and the declaration on the use of generative AI. The link to the public repository stands before the abstract. No other change to the text, the tables or the figures |
 
 Rule: a number enters the manuscript only from a file in 03_output/tables, through tables/*.tex or numbers.tex. Counts from the public score
 file that appear in sentences are protected by the comparison in step 01.
