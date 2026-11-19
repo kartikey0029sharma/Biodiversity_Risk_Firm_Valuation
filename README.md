@@ -93,8 +93,3 @@ No data file is stored in the repository.
 
 Two documents that belong to other parties (the original dissertation plan and a university handbook) sit in the author's working folder and are not part of the repository.
 
-## Credit and disclosure
-
-The research question was first raised in a dissertation proposal by Samiksha, whom the author thanks.
-
-The plan, the code and the first draft were prepared with an AI assistant (Claude, Anthropic). The sessions are listed in 05_docs/BRFV_ai_use_log.md. Version 1 of the draft carries a declaration on the use of generative AI.
