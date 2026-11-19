@@ -26,8 +26,8 @@ __pycache__/
 .pytest_cache/
 *.pyc
 
-# Delivery copies in the working folder (the draft itself lives in 04_manuscript)
-/draft_complete_v1.pdf
+# Delivery copies in the working folder (the drafts themselves live in 04_manuscript)
+/draft_complete_v*.pdf
 Claude outputs/
 
 # LaTeX build files and system files
