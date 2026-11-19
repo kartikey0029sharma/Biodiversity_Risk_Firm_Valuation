@@ -1,0 +1,9 @@
+step,n_firm_years,n_firms,dropped_firm_years
+"Compustat firm-years, fiscal years 2015-2024",119414,19383,0
+incorporated in the United States,83721,13775,35693
+reporting in US dollars,83589,13761,132
+non-financial (SIC outside 6000-6999),42340,6554,41249
+"total assets, book equity and market value available",36299,6020,6041
+GICS industry group available,35957,5841,342
+matched to a 10-K biodiversity score,17383,2904,18574
+all control variables available,16808,2774,575

@@ -1,0 +1,43 @@
+# BRFV: what must never be published or versioned
+
+# Licensed data (Compustat via WRDS) and everything built from it
+01_data/raw/compustat/*
+01_data/processed/*
+!01_data/raw/compustat/.gitkeep
+!01_data/processed/.gitkeep
+
+# Third-party files with their own terms: link to the source instead
+01_data/raw/climate/*
+!01_data/raw/climate/.gitkeep
+01_data/raw/giglio/*
+!01_data/raw/giglio/.gitkeep
+01_data/interim/*
+!01_data/interim/.gitkeep
+BRFV_giglio_raw_*.zip
+
+# Documents that belong to other parties
+Dissertation_Plan_*.docx
+NBS8020*.pdf
+
+# Run artefacts
+03_output/logs/*
+!03_output/logs/.gitkeep
+__pycache__/
+.pytest_cache/
+*.pyc
+
+# Delivery copies in the working folder (the draft itself lives in 04_manuscript)
+/draft_complete_v1.pdf
+Claude outputs/
+
+# LaTeX build files and system files
+04_manuscript/**/*.aux
+04_manuscript/**/*.log
+04_manuscript/**/*.out
+04_manuscript/**/*.fls
+04_manuscript/**/*.fdb_latexmk
+04_manuscript/**/*.synctex.gz
+.DS_Store
+Thumbs.db
+desktop.ini
+~$*

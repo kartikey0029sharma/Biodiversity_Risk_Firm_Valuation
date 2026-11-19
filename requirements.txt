@@ -1,0 +1,8 @@
+# BRFV pipeline. Tested with Python 3.10 (pandas 2.3, pyfixest 0.60) and Python 3.13 (pandas 3.0, pyfixest 0.70).
+pandas>=2.2
+numpy>=1.26
+matplotlib>=3.8
+pyfixest>=0.60
+pytest>=8.0
+# Only for brfv_02_pull_compustat_wrds.py:
+# wrds

@@ -1,0 +1,621 @@
+% draft_complete_v2.tex
+% Biodiversity Risk Disclosure and Firm Valuation (BRFV), complete draft, version 2.
+% Tables are read from tables/*.tex and quoted numbers from numbers.tex.
+% Both are written by 02_code/brfv_08_make_latex_assets.py, so no result is typed by hand.
+\documentclass[12pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{setspace}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{caption}
+\usepackage[section]{placeins}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc}
+\usepackage[round,authoryear]{natbib}
+\usepackage[hidelinks]{hyperref}
+\usepackage{microtype}
+\captionsetup{font=small,labelsep=period}
+\newcommand{\tablenote}[1]{\par\smallskip\begin{minipage}{\linewidth}\footnotesize\setstretch{1.05}#1\end{minipage}}
+\newcommand{\widetable}[1]{\resizebox{\ifdim\width>\linewidth\linewidth\else\width\fi}{!}{\input{#1}}}
+\input{numbers}
+\onehalfspacing
+
+\title{Biodiversity Risk Disclosure and Firm Valuation\\[4pt] \large Evidence from US Listed Firms}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+\vspace{-3.5em} % no author and no date in this version, so the title block is closed up
+
+\begin{abstract}
+\noindent This paper examines whether the stock market values firms differently when their annual reports discuss biodiversity risk. The study uses the three firm-level scores that \citet{giglio2026} derive from the text of 10-K filings. The first score records a substantive discussion of biodiversity, the second records the balance of negative over positive sentences, and the third records a discussion of biodiversity regulation. The scores of the previous fiscal year are matched to Compustat data for \nFinal{} firm-years of \nFirmsFinal{} non-financial firms incorporated in the United States, for fiscal years 2015 to 2024. A simple comparison shows that firms which discuss biodiversity have a much lower Tobin's Q. This gap disappears once firms are compared within the same industry group and year, and none of the three scores is then related to valuation. Within firms the picture is different for tone. A rise of one unit in the negative tone score is followed by a lower Tobin's Q, with a coefficient of \coefFAllNeg{}, which is about \effNegMean{} per cent of the sample mean. The discussion of regulation is associated with lower valuation only in fiscal years after the Kunming Declaration of October 2021, and only in the comparison with industry peers. The association does not differ between industries with high and low exposure. The evidence suggests that the market does not price the mere mention of biodiversity, while it responds to a worsening tone and, more recently, to regulatory content. A positive score is rare and persistent, so the within-firm estimates rest on fewer than two hundred firms and should be read with care.
+
+\medskip
+\noindent Keywords. Biodiversity risk, risk disclosure, firm valuation, Tobin's Q, 10-K filings, natural capital
+
+\noindent JEL classification. G14, G32, M41, Q57
+\end{abstract}
+
+\section{Introduction}
+
+Economic activity depends on nature for inputs such as clean water and pollination, and for protection against floods and disease. The \citet{wef2020} estimates that about US\$44 trillion of economic value generation, which is more than half of world GDP, is moderately or highly dependent on nature and its services. The Dasgupta Review treats nature as an asset and argues that the demands of humanity on it exceed what it can supply on a sustainable basis \citep{dasgupta2021}. If that is so, the loss of biodiversity is a source of financial risk for firms. Some firms depend on ecosystems that are degrading, and others cause damage that regulators and customers may no longer accept.
+
+Policy has moved in the same direction. The Kunming Declaration of October 2021 committed governments to a new global framework for biodiversity, and the Kunming-Montreal Global Biodiversity Framework was adopted in December 2022. Its Target 15 asks governments to ensure that large companies and financial institutions assess and disclose their biodiversity-related risks, dependencies and impacts \citep{cbd2022}. The Taskforce on Nature-related Financial Disclosures published its recommendations in September 2023 \citep{tnfd2023}, and in October 2026 the International Sustainability Standards Board issued an exposure draft on nature-related disclosures \citep{issb2026}. The United States is not a party to the Convention. For US listed firms, biodiversity therefore enters corporate reporting mainly through the annual report on Form 10-K, where managers have to describe the material risks of the business.
+
+Finance research on the topic is recent. \citet{karolyi2023} set out a research agenda and note how little the field had produced until then. \citet{giglio2026} construct a news index of aggregate biodiversity risk and several measures of exposure, among them scores based on the text of 10-K filings, and they make the data public. They report that portfolios sorted on exposure move with news about aggregate biodiversity risk, while the professionals they survey doubt that current prices reflect the risk adequately. \citet{garel2024} measure the biodiversity footprint of firms in an international sample. They find no link between the footprint and returns over 2019 to 2022 as a whole, but higher returns for firms with a large footprint from October 2021, together with a fall in their prices in the days after the Kunming Declaration.
+
+Evidence on firm valuation is thinner, and it does not agree. \citet{bach2025} measure biodiversity risk from 10-K text for US firms over 2001 to 2021 and find that higher risk goes with weaker firm performance. \citet{he2024} finds a positive association between biodiversity disclosure and market value in a US sample. \citet{cosma2025} study the biodiversity footprint of 1,848 firms in 49 countries and find lower Tobin's Q for firms with a larger footprint. In a US sub-sample that uses the scores of Giglio et al., they obtain a positive coefficient on the disclosure indicator and a negative coefficient on negative tone. The studies differ in sample, lag and fixed effects, so the signs cannot be compared directly. Read together, they suggest that the act of disclosing and the risk being disclosed may move valuation in opposite directions.
+
+The present study examines that possibility with the three 10-K scores of \citet{giglio2026}. The Count score records whether a filing contains a substantive discussion of biodiversity. The Negative score records the balance of negative over positive sentences, and the Regulation score records whether the discussion refers to regulation. The paper asks whether each score is associated with Tobin's Q in the following fiscal year, whether the association is stronger in industries with high exposure to biodiversity loss, and whether it became stronger after October 2021. The sample has \nFinal{} firm-years of non-financial firms incorporated in the United States, with fiscal years 2015 to 2024.
+
+The findings can be stated briefly. Firms that discuss biodiversity have a mean Tobin's Q of \meanQOne{}, against \meanQZero{} for other firms. This difference is a matter of industry composition, because the discussion is concentrated in energy, utilities and materials. Once firms are compared within the same industry group and year, none of the three scores is related to valuation. Within firms, a more negative tone is followed by lower valuation, and the coefficient of \coefFAllNeg{} is significant at the 5 per cent level. The Regulation score is associated with lower valuation only after October 2021, and only when firms are compared with their industry peers. The survey-based measure of industry exposure does not change any of these associations. A placebo test with future scores gives no sign that a lasting firm trait drives the results.
+
+The paper adds to the literature in four ways. First, it separates disclosure from the tone and regulatory content of disclosure. The Count score is treated as a benchmark with no predicted sign, and the hypotheses are attached to the Negative and Regulation scores. This offers one explanation for the mixed signs in earlier work. Second, it deals openly with the statistical nature of the scores. A positive score is rare and persistent, so the paper reports estimates across firms within an industry and year alongside estimates within firms, and it states how many firms identify the latter. Third, it documents a timing question that the data codebook leaves open, namely whether the year attached to a score is the fiscal year of the report or the calendar year of filing, and it settles the question with a test on the data before any regression is run. Fourth, every table and every number quoted in the text is produced by code from the public score file and a standard Compustat extract.
+
+The rest of the paper is organised as follows. Section 2 reviews the literature and develops the hypotheses. Section 3 describes the data and the empirical design. Section 4 presents the results. Section 5 discusses them, and Section 6 concludes.
+
+\section{Literature review and hypotheses}
+
+\subsection{Firm valuation and environmental risk}
+
+Tobin's Q is the ratio of the market value of a firm to the replacement cost of its assets \citep{tobin1969}. A ratio above one means that investors value the firm at more than the cost of rebuilding its assets, which reflects expected growth and assets that the balance sheet does not record. \citet{lang1994} use the measure to compare the performance of firms and point out that it needs no adjustment for risk. Because Q is built from market prices, it should respond to any information that changes the cash flows investors expect or the rate at which they discount them.
+
+Environmental risk can reach valuation through both routes. Physical damage and tighter regulation lower expected cash flows, and exposure to a risk that cannot be diversified raises the return that investors require. Investor preferences add a further route. In the model of \citet{pastor2021}, investors who prefer green assets accept lower expected returns on them, which raises the price of green firms relative to others.
+
+The evidence on carbon is consistent with these mechanisms. \citet{bolton2021} find that US firms with higher carbon emissions earn higher stock returns, which they read as compensation for carbon risk. \citet{matsumura2014} find that firm value falls as carbon emissions rise, and that firms which do not disclose their emissions are valued below firms that do. Institutional investors surveyed by \citet{krueger2020} believe that climate risks have financial consequences for the firms they hold. \citet{hoepner2024} show that investor engagement on environmental issues lowers the downside risk of the firms engaged.
+
+Two studies are close to the present one in method because they measure exposure from corporate text. \citet{sautner2023} build a firm-level measure of climate change exposure from earnings conference calls. \citet{berkman2024} build a firm-specific measure of climate risk from 10-K disclosures and show that it explains firm valuation beyond other climate measures, with more exposed firms valued lower. This paper applies the same logic to biodiversity.
+
+\subsection{Risk disclosure in annual reports}
+
+A measure taken from 10-K text records what managers choose to write, so its meaning depends on how firms disclose risk. \citet{campbell2014} study the risk factor section that became mandatory in 10-K filings from 2005. They find that firms facing greater risk disclose more risk factors and that the market uses the information, since the disclosures are reflected in measures of firm risk and of information asymmetry. On this evidence, a firm that writes more about a risk is more exposed to it.
+
+Disclosure theory gives a second reading. In the model of \citet{verrecchia1983}, disclosure is costly and managers reveal information only when the benefit is large enough, so investors cannot read silence as proof that there is nothing to report. A firm that discusses a risk in detail may simply be more open than its peers. An open firm faces less information asymmetry, which should support its valuation. \citet{matsumura2014} find this pattern for carbon, where emissions reduce value but disclosing them is better than staying silent.
+
+Both readings apply to the biodiversity scores. \citet{giglio2026} caution that measures based on 10-K text depend on the quality of the disclosure of firms. A positive score may therefore mark a more exposed firm or a more open one.
+
+\subsection{Biodiversity risk in finance}
+
+Biodiversity entered the finance literature later than climate. \citet{karolyi2023} review the field and call for research on how the protection of nature can be financed. \citet{flammer2025} study such financing directly and examine how private capital can be brought into projects that conserve or restore biodiversity. A recurring difficulty is measurement, because biodiversity loss is local and has no single unit comparable to a tonne of carbon dioxide.
+
+\citet{giglio2026} provide the measures used in this paper. They construct an index of aggregate biodiversity risk from news coverage and several measures of exposure. These are scores from 10-K text, the views of 668 survey respondents, the holdings of biodiversity funds and the responses of firms to the CDP questionnaire. Two of their results matter here. Exposure differs across industries in a plausible way and is almost unrelated to climate exposure, so biodiversity is not climate risk under another name. Portfolios sorted on exposure also move with news about aggregate biodiversity risk, which indicates that equity prices already react to it, although the survey respondents consider the pricing inadequate.
+
+Other studies measure the impact of firms on nature instead of what firms disclose. \citet{garel2024} use the corporate biodiversity footprint for an international sample from 2019 to 2022. The footprint is unrelated to returns over the whole period, but from October 2021 firms with a large footprint earn higher returns, and their prices fell in the days after the Kunming Declaration. The launch of the Taskforce on Nature-related Financial Disclosures in June 2021 had a similar effect. The authors conclude that investors began to demand compensation for the risk of future regulation and litigation. \citet{coqueret2025} build return factors from the biodiversity intensity of firms and show that these factors are not explained by standard equity factors or by carbon factors.
+
+\subsection{Biodiversity risk, firm value and corporate policy}
+
+Three studies relate biodiversity to firm value or performance. Table~\ref{tab:literature} summarises them.
+
+\begin{table}[!htbp]
+\centering\small
+\caption{Earlier evidence on biodiversity and firm value}\label{tab:literature}
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{2.9cm}>{\raggedright\arraybackslash}p{3.4cm}>{\raggedright\arraybackslash}p{3.3cm}>{\raggedright\arraybackslash}X@{}}
+\toprule
+Study & Sample & Biodiversity measure & Finding \\
+\midrule
+\citet{bach2025} & US firms, 2001 to 2021 & Risk measure from 10-K text & Higher risk goes with weaker performance, including lower sales growth and profitability. The effect is strongest in biodiversity-sensitive industries. \\
+\addlinespace
+\citet{he2024} & US non-financial firms that disclose at least once, 2001 to 2020, with 2,915 observations & One index that combines the three 10-K indicators of Giglio et al. & Positive association with Tobin's Q. The coefficient is 0.095 with year and industry fixed effects. \\
+\addlinespace
+\citet{cosma2025}, main sample & 1,848 firms in 49 countries, 2018 to 2022 & Corporate biodiversity footprint & A larger footprint goes with lower Tobin's Q and lower market-to-book. \\
+\addlinespace
+\citet{cosma2025}, US sub-sample & 860 observations & The three 10-K scores of Giglio et al., lagged two years & Count is positive at 0.332, Negative is negative at $-0.319$ and Regulation is positive at 0.486. \\
+\bottomrule
+\end{tabularx}
+\tablenote{Source. The studies cited. Coefficients are those reported by the authors.}
+\end{table}
+
+The studies contradict each other less than the signs suggest. \citet{bach2025} measure risk and find a negative effect. \citet{he2024} keeps only firms that disclose at least once and combines the three indicators into one index, so the positive coefficient describes firms that disclose more among firms that disclose. \citet{cosma2025} enter the three scores separately in their US sub-sample and obtain a positive sign for disclosure and a negative sign for negative tone. Their sub-sample has 860 observations, so the estimates are imprecise, and the positive coefficient on the Regulation score does not fit a regulatory risk channel easily.
+
+Biodiversity risk also changes how firms manage liquidity. \citet{ahmad2024} find that firms with higher exposure hold more cash, that the effect is separate from climate exposure, and that it is stronger in industries highly exposed to biodiversity risk. \citet{wang2026} report the same direction and show that firms build the cash mainly by cutting discretionary spending. Holding cash as a precaution is costly, so these results suggest that managers treat biodiversity risk as material.
+
+\subsection{Research gap and hypotheses}
+
+The review leaves three matters open. First, to the best of the knowledge of the author, no study has entered the three 10-K scores side by side in a design with a one-year lag and with fixed effects chosen for a rare and persistent regressor. Such a design can show whether the transparency reading and the exposure reading hold at the same time. Second, the timing evidence of \citet{garel2024} concerns returns and a footprint measure. Whether the valuation of US firms responds more strongly to 10-K disclosure after October 2021 has not been tested with these scores, as far as the author is aware. Third, the statistical properties of the scores limit what can be identified, and a design that uses them has to state this openly.
+
+The hypotheses follow from the two readings of disclosure, which Figure~\ref{fig:framework} sets out. The Count score records that a firm discusses biodiversity at all. Under the exposure reading it should lower valuation, and under the transparency reading it should raise it. No sign is therefore predicted, and the coefficient is reported as a benchmark. The Negative score isolates filings that frame biodiversity as a threat, where the exposure reading should dominate.
+
+\begin{quote}
+H1. Firms with a higher Negative score have a lower Tobin's Q in the following fiscal year.
+\end{quote}
+
+The Regulation score isolates filings that refer to rules protecting biodiversity. Such rules restrict land use and raise compliance costs, which is the kind of risk that \citet{garel2024} see behind the pricing of biodiversity footprints. The one earlier estimate for this score, in the US sub-sample of \citet{cosma2025}, is positive. The prediction is therefore contested, and it is tested with a two-sided test.
+
+\begin{quote}
+H2. Firms whose filing discusses biodiversity regulation have a lower Tobin's Q in the following fiscal year.
+\end{quote}
+
+Exposure differs strongly across industries \citep{giglio2026}, and earlier studies find stronger effects where the industry is exposed or sensitive \citep{ahmad2024,bach2025}. A discussion of biodiversity should carry more information for investors where the business depends on nature.
+
+\begin{quote}
+H3. The negative association in H1 and H2 is stronger in industries with high biodiversity exposure.
+\end{quote}
+
+\citet{garel2024} find that investors began to price biodiversity after the Kunming Declaration. If investor attention rose at that point, the same disclosure should weigh more on valuation afterwards.
+
+\begin{quote}
+H4. The negative association in H1 and H2 is stronger in fiscal years after October 2021.
+\end{quote}
+
+\begin{figure}[!htbp]
+\centering
+\begin{tikzpicture}[node distance=5mm and 11mm, every node/.style={font=\small},
+  box/.style={draw=black!55, rounded corners=2pt, align=center, inner sep=5pt, execute at begin node={\hyphenpenalty=10000\exhyphenpenalty=10000}},
+  score/.style={box, fill=blue!7, text width=3.9cm},
+  channel/.style={box, fill=orange!12, text width=4.7cm},
+  outcome/.style={box, fill=black!6, text width=2.5cm},
+  moderator/.style={box, fill=green!8, text width=4.7cm},
+  flow/.style={-{Latex[length=2.2mm]}, draw=black!65}]
+\node[score] (count) {Count\\ any substantive discussion};
+\node[score, below=of count] (neg) {Negative\\ balance of negative tone};
+\node[score, below=of neg] (reg) {Regulation\\ reference to regulation};
+\node[channel, right=of count] (trans) {Transparency reading\\ lower information asymmetry};
+\node[channel, right=of reg] (expo) {Exposure reading\\ lower expected cash flows and a higher required return};
+\node[outcome, right=9mm of $(trans.east)!0.5!(expo.east)$] (q) {Tobin's Q at the end of fiscal year $t$};
+\node[moderator, below=8mm of expo] (mods) {Stronger in exposed industries (H3)\\ Stronger after October 2021 (H4)};
+\node[above=1mm of count, font=\footnotesize, text=black!70] {10-K of fiscal year $t-1$};
+\draw[flow] (count) -- (trans);
+\draw[flow] (count.east) -- (expo.north west);
+\draw[flow] (neg.east) -- node[pos=0.3, above, font=\footnotesize] {H1} (expo.west);
+\draw[flow] (reg) -- node[below, font=\footnotesize] {H2} (expo);
+\draw[flow] (trans.east) -- node[above, sloped, font=\footnotesize] {raises} (q);
+\draw[flow] (expo.east) -- node[below, sloped, font=\footnotesize] {lowers} (q);
+\draw[flow, dashed] (mods) -- (expo);
+\end{tikzpicture}
+\caption{Conceptual framework and hypotheses}\label{fig:framework}
+\tablenote{Note. The Count score can work through both readings, so no sign is predicted for it. The dashed arrow marks the two conditions under which the exposure reading is expected to be stronger.}
+\end{figure}
+
+\section{Data and methodology}
+
+\subsection{Data sources}
+
+The study combines two sources. The biodiversity scores come from the public data files that accompany \citet{giglio2026}, obtained from the data page of the authors on 18 November 2026. The firm-level file holds 60,422 rows for 7,236 tickers and the years 2000 to 2024. Each row carries a ticker, a year, a CUSIP and the three scores. Three small files give exposure scores for GICS industry groups, based on the survey of the authors, on the holdings of biodiversity funds and on CDP responses. Accounting and market data come from the Compustat North America Fundamentals Annual file, obtained through WRDS, and the extract covers fiscal years 2013 to 2025 in full. The extra years at both ends are needed for growth rates and for the timing test in Section 3.3. Each raw file is identified by its SHA-256 hash, which is recorded in the data log and checked every time the code runs. Figure~\ref{fig:design} shows the path from the raw files to the tables.
+
+\begin{figure}[!htbp]
+\centering
+\begin{tikzpicture}[node distance=5mm and 8mm, every node/.style={font=\small},
+  box/.style={draw=black!55, rounded corners=2pt, align=center, inner sep=5pt, execute at begin node={\hyphenpenalty=10000\exhyphenpenalty=10000}},
+  source/.style={box, fill=blue!7, text width=5.6cm},
+  process/.style={box, fill=black!5, text width=9.4cm},
+  result/.style={box, fill=orange!12, text width=9.4cm},
+  flow/.style={-{Latex[length=2.2mm]}, draw=black!65}]
+\node[source] (scores) {Public score files of Giglio et al.\\ hash check and cleaning, step 01};
+\node[source, right=of scores] (compustat) {Compustat annual extract\\ format filter and variables, step 03};
+\node[process, below=7mm of $(scores.south)!0.5!(compustat.south)$] (timing) {Timing test of the score year, then match on CUSIP and on ticker, step 04};
+\node[process, below=of timing] (panel) {Sample filters and firm-year panel, step 04};
+\node[process, below=of panel] (models) {Descriptive statistics, step 05\\ Regression models, step 06\\ Robustness checks, step 07};
+\node[result, below=of models] (draft) {Tables, figures and quoted numbers of this draft, step 08};
+\draw[flow] (scores.south) -- (scores.south |- timing.north);
+\draw[flow] (compustat.south) -- (compustat.south |- timing.north);
+\draw[flow] (timing) -- (panel);
+\draw[flow] (panel) -- (models);
+\draw[flow] (models) -- (draft);
+\end{tikzpicture}
+\caption{Research design from the raw files to the tables}\label{fig:design}
+\tablenote{Note. The step numbers refer to the scripts that accompany the paper. Each step checks its inputs before it writes any output.}
+\end{figure}
+
+\subsection{Biodiversity scores}
+
+\citet{giglio2026} classify the sentences of each 10-K filing and build three scores. According to the codebook, Count equals one if the filing contains at least two sentences about biodiversity. Negative is the number of biodiversity sentences with a negative tone minus the number with a positive tone. Regulation equals one if the filing contains at least two biodiversity sentences of which at least one concerns regulation. The authors report a precision of 83.6 per cent and a recall of 78.6 per cent in the validation of their classification.
+
+Four features of the file shape the cleaning rules.
+
+\begin{itemize}
+\item A total of 458 rows have no CUSIP and no Count or Regulation score. They belong to 76 tickers in the years 2000 to 2018 and are dropped.
+\item The year 2000 contains no positive score in any of its 2,743 rows. It is dropped, and the series starts in 2001.
+\item Identifiers are read as text. The file contains the tickers NA and TRUE, and in 7,980 rows the CUSIP begins with a zero. A default import would turn the first into missing values and strip the zeros from the second.
+\item In 340 rows Count is zero while Negative is not zero. A single sentence can carry tone without reaching the threshold of two sentences, so Negative is kept as a variable in its own right and is not set to zero when Count is zero.
+\end{itemize}
+
+After cleaning, the file holds 57,269 firm-years for 2001 to 2024, with one row per ticker and year. Negative ranges from $-9$ to 8, and Regulation never equals one when Count is zero. The scores for 2024 differ from earlier years in coverage. The file holds 3,728 firms in 2024 against 2,337 in 2023, and 1,176 of the 2024 tickers appear in no earlier year. The main analysis therefore uses scores up to 2023. Because the scores are lagged by one year, Tobin's Q can still be measured up to fiscal year 2024.
+
+\subsection{Timing of the score year}
+
+The codebook does not say whether the year in the file is the fiscal year that a 10-K reports on or the calendar year in which it was filed. For a firm with a December year end the two differ by one, and the wrong choice would shift every regressor by a year. The question was examined on the data in two steps, using only firms with a December year end so that fiscal and calendar years coincide. Table~\ref{tab:alignment} in the appendix reports the counts.
+
+The first step compares years. If the score year is the fiscal year, the first score year of a newly listed firm should equal the first fiscal year in which it has a share price. If the score year is the filing year, the last score year of a firm that leaves should be one year later than its last fiscal year in Compustat. The two signals disagree. The first score year equals the first priced fiscal year for \entryZero{} firms and is one year later for \entryOne{} firms, which points to the fiscal year. The last score year is one year later than the last priced fiscal year for \exitOne{} firms and equal to it for \exitZero{} firms, which points to the filing year.
+
+The second step resolves the conflict. The score file holds one more row for a typical firm than the firm has annual reports, so one of the two boundary rows cannot have a filing behind it, and such a row has all three scores at zero. Among the \nTrailRows{} rows that lie one year after the last priced fiscal year, \nTrailFilled{} carry any score. One year earlier, \nTrailBeforeFilled{} of \nTrailBefore{} rows of the same firms carry a score. The rows at the start are not empty, since \nFirstFilled{} of \nFirstRows{} first rows carry a score, although this share is lower than one year later, when \nFirstNextFilled{} of \nFirstNext{} rows carry one. The empty row is therefore the one after the last annual report. This is what the fiscal year reading implies, and the study adopts it.
+
+Under this reading the regressor for Tobin's Q at the end of fiscal year $t$ is the score of fiscal year $t-1$. It comes from a 10-K that investors could read some months before the valuation date. Because the first rows are thinner than expected, the conclusion is not beyond doubt, and robustness check R10 repeats the analysis under the other reading.
+
+\subsection{Sample construction}
+
+The sample starts from all Compustat firm-years with fiscal years 2015 to 2024 in the standard industrial format with consolidated data. Filters are applied in a fixed order, and Figure~\ref{fig:sample} records the number of firm-years and firms left after each step. The firm has to be incorporated in the United States and report in US dollars. Financial firms with SIC codes 6000 to 6999 are excluded. Total assets and the market value of equity have to be positive, and book equity and a GICS industry group have to be available. The firm-year has to be matched to a biodiversity score of the previous fiscal year, and all control variables have to be available.
+
+\begin{figure}[!htbp]
+\centering
+\input{figures/fig_sample_flow}
+\caption{Construction of the sample}\label{fig:sample}
+\tablenote{Note. Each box applies one more filter to the firm-years that passed the box above it. The counts are written by the code that builds the sample.}
+\end{figure}
+
+Scores are matched to Compustat on the first eight characters of the CUSIP and the score year. Firm-years that remain unmatched are then matched on ticker and score year, and a score row is never used twice. Compustat reports the most recent CUSIP of a firm, so firms that changed their CUSIP can be missed in the first step, and the ticker step recovers only part of them. Of the \nGics{} firm-years that pass the earlier filters, \nMatched{} are matched to a score, which is \pctMatched{} per cent. The score file therefore covers about half of the non-financial firm-years in Compustat, and the results describe the firms that it covers. About \pctCusip{} per cent of the firm-years in the final sample are matched on CUSIP. The final sample has \nFinal{} firm-years of \nFirmsFinal{} firms.
+
+\subsection{Variables}
+
+The dependent variable is Tobin's Q at the end of fiscal year $t$,
+\begin{equation}
+Q_{i,t} = \frac{AT_{i,t} - CEQ_{i,t} + PRCC\_F_{i,t} \times CSHO_{i,t}}{AT_{i,t}},
+\end{equation}
+where $AT$ is total assets, $CEQ$ is common equity, $PRCC\_F$ is the share price at the fiscal year end and $CSHO$ is the number of shares outstanding. The book value of assets stands in for their replacement cost, which is the usual simplification in this literature.
+
+The control variables are firm size, leverage, profitability, asset tangibility, sales growth, research and development intensity, capital expenditure, cash holdings and an indicator for dividend payers. Missing research and development expense is set to zero and flagged with a separate indicator. All controls are measured in the same fiscal year as Tobin's Q. Tobin's Q and the continuous controls are winsorised at the 1st and 99th percentiles of the pooled sample. Table~\ref{tab:variables} in the appendix gives the definitions and the Compustat items.
+
+Two indicators are used in the further tests. High equals one for firms in industry groups whose survey-based exposure lies above the two-thirds quantile of the non-financial industry groups. Post equals one for fiscal years from 2022, the first fiscal years in which every year end falls after the Kunming Declaration.
+
+\subsection{Empirical models}
+
+The baseline model compares firms within the same industry group and fiscal year,
+\begin{equation}
+Q_{i,t} = \beta_1 \mathit{Count}_{i,t-1} + \beta_2 \mathit{Negative}_{i,t-1} + \beta_3 \mathit{Regulation}_{i,t-1} + \gamma' X_{i,t} + \mu_{j,t} + \varepsilon_{i,t},
+\label{eq:baseline}
+\end{equation}
+where $i$ is the firm, $t$ the fiscal year and $j$ the GICS industry group. $X$ is the vector of controls, and $\mu_{j,t}$ is a fixed effect for each industry group in each year, which removes differences between industries and shocks common to an industry in a year. H1 predicts a negative $\beta_2$ and H2 a negative $\beta_3$. The second model replaces the industry-by-year effects with firm effects $\alpha_i$ and year effects $\lambda_t$, so that the coefficients are identified from changes within a firm,
+\begin{equation}
+Q_{i,t} = \beta_1 \mathit{Count}_{i,t-1} + \beta_2 \mathit{Negative}_{i,t-1} + \beta_3 \mathit{Regulation}_{i,t-1} + \gamma' X_{i,t} + \alpha_i + \lambda_t + \varepsilon_{i,t}.
+\label{eq:firm}
+\end{equation}
+Each equation is estimated with the controls only, then with one score at a time, and then with the three scores together.
+
+H3 and H4 are tested with interaction terms, one score $S$ at a time,
+\begin{align}
+Q_{i,t} &= \beta S_{i,t-1} + \delta \left( S_{i,t-1} \times \mathit{High}_{j} \right) + \gamma' X_{i,t} + \mu_{j,t} + \varepsilon_{i,t}, \label{eq:high}\\
+Q_{i,t} &= \beta S_{i,t-1} + \theta \left( S_{i,t-1} \times \mathit{Post}_{t} \right) + \gamma' X_{i,t} + \mu_{j,t} + \varepsilon_{i,t}. \label{eq:post}
+\end{align}
+The indicators High and Post do not enter on their own because the fixed effects absorb them. H3 predicts a negative $\delta$ and H4 a negative $\theta$ for the Negative and Regulation scores. Equation~\eqref{eq:post} is also estimated with firm and year fixed effects. Fiscal year 2021 needs care in this test. It covers year ends from June 2021 to May 2022, so a firm with a December year end is valued some weeks after the declaration although the year counts as the earlier period. Equation~\eqref{eq:post} is therefore estimated a third time without fiscal year 2021.
+
+All models are estimated by ordinary least squares with high-dimensional fixed effects. Standard errors are clustered by firm, because both valuation and disclosure are persistent within firms \citep{petersen2009}. Tests are two-sided, and the 5 per cent level is used as the threshold for a finding. The list of models and the rules for reading them were fixed before any firm-level data were merged. Two additions were made after the timing test and before any regression was run, namely the estimate without fiscal year 2021 and robustness check R10.
+
+\subsection{Identification and its limits}
+
+The estimates are associations, and four features of the setting limit a causal reading. These are the standard sources of endogeneity in corporate finance \citep{roberts2013}.
+
+The first is that disclosure is a choice. Managers decide what to write, so a coefficient on a score mixes the effect of the underlying exposure with the effect of disclosing it. Entering the three scores separately reduces this problem but does not remove it. The second is omitted variables. The business model or location of a firm may drive both what it discloses and how it is valued. Industry-by-year effects remove differences between industries, and firm effects remove firm traits that do not change over time. Traits that change over time remain a concern. The third is reverse causality. A fall in valuation could itself lead managers to write more about risk. Lagging the scores by one year rules out an effect of the valuation of the same year on the text, although persistent shocks can still run in that direction.
+
+The fourth is specific to these scores. A positive score is rare and persistent, so estimates with firm fixed effects rest on the few firms whose score changes. The model with industry-by-year effects is therefore the main specification, and the model with firm effects is reported beside it. A placebo test adds a further check. If investors respond to what a firm discloses, the score that the firm will report two years later should not explain the valuation of today once the current scores are in the model. If it does, a lasting firm trait is at work.
+
+\subsection{Robustness checks}
+
+Ten checks re-estimate the model for one score at a time with the full set of controls.
+
+\begin{itemize}
+\item R1 uses the natural logarithm of Tobin's Q.
+\item R2 uses Tobin's Q minus the median of its industry group and year, with year fixed effects.
+\item R3 excludes utilities, whose prices are regulated.
+\item R4 excludes fiscal year 2020, the first year of the pandemic.
+\item R5 keeps only firms with a December year end, for which fiscal and calendar years coincide.
+\item R6 keeps only firm-years matched on CUSIP.
+\item R7 keeps only firms that have a positive Count score at least once, with firm and year fixed effects.
+\item R8 clusters standard errors by industry group. With about twenty clusters these standard errors are indicative only.
+\item R9 is the placebo test with the score that the firm reports two years later.
+\item R10 uses the score of the next score year, which would be the latest filing if the year in the score file were the filing year.
+\end{itemize}
+
+\subsection{Reproducibility}
+
+The analysis is run by numbered scripts from the raw files to the tables. Each step checks its inputs before it writes anything. The checks cover the hashes of the raw files, the uniqueness of firm-years after every merge, the number of observations lost at each filter, and a comparison of the cleaned score file with counts recorded on the day of download. A test suite runs the whole pipeline on a synthetic data set with a known coefficient and compares the fixed-effects estimator with a dummy-variable regression. The synthetic data are used for testing only. The tables in this draft and the numbers quoted in the text are written by the last script, so they cannot differ from the output of the code.
+
+\section{Empirical results}
+
+\subsection{Disclosure scores over time}
+
+Figure~\ref{fig:share} shows, for each year, the share of firms in the score file with a positive Count score and with a positive Regulation score. Discussion of biodiversity in 10-K filings was rare at the start of the period and has grown more than fourfold. The rise is not smooth. The share fell between 2017 and 2021 and rose again in 2022. Part of the fall comes from the denominator, since the number of firms in the file grew from 2,285 in 2019 to 2,843 in 2021 while the number of firms with a positive score stayed between 93 and 105. Score year 2022 refers to annual reports for fiscal year 2022, most of which were filed in early 2023, after the Kunming-Montreal framework had been adopted.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.92\linewidth]{figures/BRFV_F01_disclosure_share_by_year.png}
+\caption{Share of firms with a positive biodiversity score in their 10-K filing, 2001 to 2024}\label{fig:share}
+\tablenote{Source. Score file of \citet{giglio2026}, 57,269 firm-years. Calculations of the author.}
+\end{figure}
+
+Table~\ref{tab:period} groups the years into periods and adds the tone of the discussion. Regulation accounts for a growing part of the discussion. Half of the firm-years with a positive Count score also had a positive Regulation score in 2001 to 2007, against three quarters in 2015 to 2023. The shares for 2015 to 2023 agree with those that \citet{giglio2026} report for the same years, which are about 4.2 per cent for biodiversity and 3.2 per cent for regulation. This confirms that the file has been read correctly. The tone is negative far more often than positive. In 2015 to 2023 the Negative score is above zero in 494 firm-years and below zero in 131.
+
+\begin{table}[!htbp]
+\centering\small
+\caption{Biodiversity scores in 10-K filings by period}\label{tab:period}
+\widetable{tables/tab_scores_by_period}
+\tablenote{Source. Score file of \citet{giglio2026}. Firm-years are rows with valid scores. The last two columns count all firm-years, including those with a Count score of zero.}
+\end{table}
+
+\subsection{Persistence of disclosure}
+
+Table~\ref{tab:persistence} follows firms from one year to the next. Few firms ever have a positive score. In 2015 to 2023 this holds for 263 of 3,746 firms, or 7 per cent. The score is also sticky. A firm with a positive score keeps it in the next year in 80 per cent of cases, while a firm without one acquires it in less than 1 per cent of cases. As a result only 215 firms change status in 2015 to 2023.
+
+\begin{table}[!htbp]
+\centering\small
+\caption{Persistence of the Count score}\label{tab:persistence}
+\widetable{tables/tab_persistence}
+\tablenote{Source. Score file of \citet{giglio2026}. Firms are identified by ticker. The last two columns are computed over pairs of consecutive years for the same firm.}
+\end{table}
+
+\subsection{Industry exposure and industry disclosure}
+
+Table~\ref{tab:industry} lists the survey-based exposure scores of \citet{giglio2026} for the GICS industry groups, together with the place of each group in the regression sample. A higher survey value means that respondents rate the industry as more exposed. Seven of the twenty non-financial industry groups lie above the two-thirds quantile and form the high-exposure group.
+
+The right-hand columns show that disclosure follows a different pattern. A positive Count score is found in \pctEnergy{} per cent of the firm-years in Energy, in \pctUtilities{} per cent in Utilities and in \pctMaterials{} per cent in Materials. These three groups hold \pctTopThree{} per cent of all firm-years with a positive score. In Food, Beverage and Tobacco and in the two health care groups, which the survey also rates as highly exposed, the share is below 2 per cent. The survey therefore captures where respondents see exposure, while the 10-K scores capture where firms write about it. The two agree for energy, utilities and materials and differ for food and health care, which matters for the test of H3.
+
+\begin{table}[!htbp]
+\centering\small
+\caption{Survey-based exposure and disclosure by GICS industry group}\label{tab:industry}
+\widetable{tables/tab_industry}
+\tablenote{Source. Survey file of \citet{giglio2026} and the regression sample. Average is the mean of the transition and physical scores. High marks groups above the two-thirds quantile of the non-financial groups. Firms are screened on SIC codes, so a few firms with a financial GICS code remain in the sample. One group has no survey score.}
+\end{table}
+
+\subsection{Sample and descriptive statistics}
+
+Table~\ref{tab:summary} reports summary statistics for the \nFinal{} firm-years of the sample. The mean of Tobin's Q is \meanQ{} and the median is \medianQ{}. A positive Count score is found in \pctCount{} per cent of the firm-years and a positive Regulation score in \pctReg{} per cent. About \pctHigh{} per cent of the firm-years belong to high-exposure industries, and about \pctDecember{} per cent have a December year end.
+
+\begin{table}[!htbp]
+\centering\small
+\caption{Summary statistics}\label{tab:summary}
+\widetable{tables/tab_summary}
+\tablenote{Note. The three scores are those of the previous fiscal year. Tobin's Q and the continuous controls are winsorised at the 1st and 99th percentiles. Table~\ref{tab:variables} gives the definitions.}
+\end{table}
+
+Table~\ref{tab:means} compares firm-years with and without a positive Count score, and Figure~\ref{fig:qgroups} shows the mean of Tobin's Q for the two groups in each fiscal year. Firms that discuss biodiversity are valued much lower. Their mean Tobin's Q is \meanQOne{}, against \meanQZero{} for the other firm-years, and the gap is present in every year. The same firms are larger, hold far more tangible assets, with a tangibility of \tangOne{} against \tangZero{}, invest more, spend little on research and development and hold less cash. These are the features of asset-heavy industries, which are valued lower for reasons that have nothing to do with disclosure. The raw gap therefore cannot be read as an effect of biodiversity disclosure.
+
+\begin{table}[!htbp]
+\centering\small
+\caption{Firm-years with and without a positive Count score}\label{tab:means}
+\widetable{tables/tab_means}
+\tablenote{Note. The last column is a Welch $t$ statistic. Firm-years are not independent, so it is a description and not a test.}
+\end{table}
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.88\linewidth]{figures/BRFV_F02_tobin_q_by_disclosure.png}
+\caption{Mean Tobin's Q by disclosure status and fiscal year}\label{fig:qgroups}
+\tablenote{Source. Regression sample, \nFinal{} firm-years. Tobin's Q is winsorised.}
+\end{figure}
+
+Table~\ref{tab:variation} shows how much variation the scores offer. Only \nEverCount{} firms have a positive Count score in at least one year, and \nChangeCount{} of them change status within the sample. The Negative score changes over time for \nChangeNeg{} firms and the Regulation score for \nChangeReg{} firms. Estimates with firm fixed effects rest on these firms.
+
+\begin{table}[!htbp]
+\centering\small
+\caption{Variation in the scores within the sample}\label{tab:variation}
+\widetable{tables/tab_variation}
+\tablenote{Note. A firm contributes to an estimate with firm fixed effects only if its score changes over time.}
+\end{table}
+
+\subsection{Biodiversity scores and Tobin's Q}
+
+Table~\ref{tab:baseline} reports equation~\eqref{eq:baseline}. With industry-by-year effects and controls, none of the three scores is related to Tobin's Q. The coefficient on Count is \coefBCount{} with a standard error of \seBCount{} when it enters alone. The coefficients on Negative and Regulation are \coefBNeg{} and \coefBReg{}, and both are well within one standard error of zero. When the three scores enter together in column 5, the coefficient on Negative is \coefBAllNeg{} and the coefficient on Regulation is \coefBAllReg{}, and neither is significant. The large raw gap of Section 4.4 is thus fully explained by industry, year and firm characteristics. The controls behave as expected. Profitable firms and firms with more cash are valued higher.
+
+\begin{table}[!htbp]
+\centering\small
+\caption{Biodiversity scores and Tobin's Q with industry-by-year effects}\label{tab:baseline}
+\widetable{tables/tab_baseline}
+\tablenote{Note. The dependent variable is Tobin's Q. Scores are those of the previous fiscal year. Standard errors clustered by firm are in parentheses. One, two and three stars mark significance at the 10, 5 and 1 per cent levels. The model labels are those used in the code.}
+\end{table}
+
+Table~\ref{tab:firm} reports equation~\eqref{eq:firm}. Within firms, the Count and Regulation scores remain unrelated to valuation. The Negative score behaves differently. Its coefficient is \coefFNeg{} when it enters alone, with a $p$ value of \pvalFNeg{}, and \coefFAllNeg{} when the three scores enter together, with a standard error of \seFAllNeg{} and a $p$ value of \pvalFAllNeg{}. When the tone of the biodiversity discussion of a firm becomes more negative by one sentence, its Tobin's Q in the following year is lower by about \effNegMean{} per cent of the sample mean, or \effNegDisc{} per cent of the mean of the firm-years with a positive Count score. Figure~\ref{fig:coefficients} sets the two sets of estimates side by side.
+
+\begin{table}[!htbp]
+\centering\small
+\caption{Biodiversity scores and Tobin's Q with firm and year effects}\label{tab:firm}
+\widetable{tables/tab_firm_effects}
+\tablenote{Note. The dependent variable is Tobin's Q. Scores are those of the previous fiscal year. Firms with one observation drop out. Standard errors clustered by firm are in parentheses. One, two and three stars mark significance at the 10, 5 and 1 per cent levels.}
+\end{table}
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.9\linewidth]{figures/BRFV_F03_coefficients_main.png}
+\caption{Coefficients on the three scores under the two specifications}\label{fig:coefficients}
+\tablenote{Source. Column 5 of Table~\ref{tab:baseline} and column 5 of Table~\ref{tab:firm}. The lines show 95 per cent confidence intervals.}
+\end{figure}
+
+The rule for reading these tables was fixed in advance. H1 would be supported if the coefficient on Negative were negative and significant at the 5 per cent level in the main specification and of the same sign within firms. The main specification shows no association, so H1 is not supported as stated. The within-firm estimate is negative and significant, and it is treated as evidence that is confined to changes within firms. H2 is not supported. The coefficient on Regulation is not significant in either specification and changes sign between them. The coefficient on Count, for which no sign was predicted, is close to zero throughout.
+
+\subsection{Industry exposure and the period after October 2021}
+
+Table~\ref{tab:exposure} reports equation~\eqref{eq:high}. The interaction of each score with the high-exposure indicator is small relative to its standard error. For the Negative score the interaction is \coefXNeg{} with a standard error of \seXNeg{}, and for the Regulation score it is \coefXReg{} with a standard error of \seXReg{}. H3 is not supported. Section 4.3 suggests one reason. The high-exposure group holds the three industries in which most of the discussion takes place, together with food and health care, where firms hardly discuss biodiversity. Outside the group a positive score is rare, so the slope for the other industries rests on few firm-years and the difference between the two slopes is imprecise.
+
+\begin{table}[!htbp]
+\centering\small
+\caption{Biodiversity scores and Tobin's Q in high-exposure industries}\label{tab:exposure}
+\widetable{tables/tab_exposure}
+\tablenote{Note. The dependent variable is Tobin's Q. High marks industry groups above the two-thirds quantile of the survey-based exposure score. The indicator itself is absorbed by the fixed effects. Controls are included. Standard errors clustered by firm are in parentheses.}
+\end{table}
+
+Table~\ref{tab:event} reports equation~\eqref{eq:post}. The result differs by score. For the Regulation score the interaction with Post is \coefEReg{} with a standard error of \seEReg{} and a $p$ value of \pvalEReg{} in the main specification. Before fiscal year 2022 a discussion of regulation was unrelated to valuation, and from 2022 onwards firms with such a discussion are valued lower than their industry peers. The estimate without fiscal year 2021 is \coefEDReg{} with a $p$ value of \pvalEDReg{}, so the result does not depend on the transition year. Within firms the interaction is \coefEFReg{} and not significant. For the Negative score the interaction has the predicted sign in all three versions but is not significant, with \coefENeg{} in the main specification and \coefEFNeg{} within firms. For the Count score there is no change.
+
+\begin{table}[!htbp]
+\centering\footnotesize
+\caption{Biodiversity scores and Tobin's Q after the Kunming Declaration}\label{tab:event}
+\widetable{tables/tab_event}
+\tablenote{Note. The dependent variable is Tobin's Q. Post equals one for fiscal years from 2022 and is absorbed by the year effects. Columns 7 to 9 repeat columns 1 to 3 without fiscal year 2021. Controls are included. Standard errors clustered by firm are in parentheses. Two stars mark significance at the 5 per cent level.}
+\end{table}
+
+By the rule fixed in advance, H4 is supported for the Regulation score, since the interaction is negative and significant at the 5 per cent level and holds when fiscal year 2021 is left out. The support is partial. It does not extend to the Negative score, and it is not confirmed within firms, where few firms change their Regulation score after 2021.
+
+\subsection{Robustness}
+
+Table~\ref{tab:robustness} reports the ten checks. The absence of an association in the comparison across firms is stable. It holds for the logarithm of Tobin's Q, for industry-adjusted Tobin's Q, without utilities, without fiscal year 2020, for firms with a December year end, for firm-years matched on CUSIP and with standard errors clustered by industry group. Check R10, which uses the score of the next score year, gives the same picture, so the main conclusion does not depend on the reading of the score year.
+
+\begin{table}[!htbp]
+\centering\small
+\caption{Robustness checks}\label{tab:robustness}
+\widetable{tables/tab_robustness}
+\tablenote{Note. Each cell comes from one regression of Tobin's Q on one score and the full set of controls. Standard errors are in parentheses. Checks R1 to R6 and R8 to R10 use industry-by-year effects. In R9 the regressor is the score reported two years later, added to the model with the three lagged scores. Three stars mark significance at the 1 per cent level.}
+\end{table}
+
+Two checks speak to the within-firm result on tone. Check R7 keeps only the \nFirmsRSeven{} firms that ever have a positive Count score and uses firm and year effects. The coefficient on Negative is \coefRSevenNeg{} with a standard error of \seRSevenNeg{}, which is significant at the 1 per cent level. The placebo test in R9 finds no relation between the valuation of today and the scores that a firm reports two years later. The coefficients are \coefRNineCount{} for Count, \coefRNineNeg{} for Negative and \coefRNineReg{} for Regulation, and none is significant. A lasting firm trait that drives both tone and valuation would have shown up here.
+
+Table~\ref{tab:verdict} brings the tests together.
+
+\begin{table}[!htbp]
+\centering\small
+\caption{Hypotheses and outcomes}\label{tab:verdict}
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{4.3cm}>{\raggedright\arraybackslash}p{3.6cm}>{\raggedright\arraybackslash}p{3.3cm}>{\raggedright\arraybackslash}X@{}}
+\toprule
+Hypothesis & Across firms in an industry and year & Within firms & Outcome \\
+\midrule
+H1. Higher Negative score, lower Q & \coefBAllNeg{}, not significant & \coefFAllNeg{}, significant at 5 per cent & Not supported as stated. Evidence within firms only. \\
+\addlinespace
+H2. Regulation discussed, lower Q & \coefBAllReg{}, not significant & \coefFAllReg{}, not significant & Not supported. \\
+\addlinespace
+H3. Stronger in exposed industries & Interactions not significant & Not estimated & Not supported. \\
+\addlinespace
+H4. Stronger after October 2021 & Regulation \coefEReg{}, significant at 5 per cent. Negative \coefENeg{}, not significant & Regulation \coefEFReg{} and Negative \coefEFNeg{}, not significant & Supported for Regulation across firms. Not confirmed within firms. \\
+\addlinespace
+Count, no predicted sign & \coefBAllCount{}, not significant & \coefFAllCount{}, not significant & No association. \\
+\bottomrule
+\end{tabularx}
+\tablenote{Note. The entries are the coefficients from Tables~\ref{tab:baseline}, \ref{tab:firm} and \ref{tab:event}. For H4 the entries are the interactions with Post.}
+\end{table}
+
+\section{Discussion}
+
+\subsection{Interpretation of the findings}
+
+The first finding is that the mere mention of biodiversity in a 10-K filing is not priced. Firms that discuss biodiversity are valued far lower than other firms, but they are energy producers, utilities and materials firms with heavy tangible assets, and the gap disappears once firms are compared with their industry peers. The Count score, which was entered as a benchmark without a predicted sign, is close to zero in every specification. Neither the exposure reading nor the transparency reading of disclosure leaves a trace at this level. One possibility is that the two offset each other. Another is that a mention of biodiversity in the risk section tells investors little that they do not already know from the industry of the firm.
+
+The second finding concerns tone. When the discussion of a firm turns more negative from one year to the next, its valuation in the following year is lower. The size is modest, at about \effNegMean{} per cent of the sample mean for one more negative sentence, and the estimate comes from the \nChangeNeg{} firms whose Negative score changes within the sample. The result is in line with the exposure reading, and the placebo test gives no sign that a lasting firm trait lies behind it. Two cautions apply. A more negative discussion may follow an adverse event, such as a regulatory action or a dispute over land, and the fall in value may reflect the event and not the wording. The study cannot separate the two. The association is also absent across firms, where differences in tone may reflect differences in the style of reporting more than differences in risk.
+
+The third finding concerns regulation. Until fiscal year 2021 a discussion of biodiversity regulation was unrelated to valuation. From fiscal year 2022 firms with such a discussion are valued lower than their industry peers. This matches the evidence of \citet{garel2024}, who find that investors began to price biodiversity footprints after the Kunming Declaration and who point to the risk of future regulation. The result should still be read with care. It is one significant interaction among three scores, it is not confirmed within firms, and the paper does not claim that the declaration caused the change. The period after 2021 also saw higher interest rates and a fall in the valuation of many firms, although the industry-by-year effects absorb such movements at the level of the industry.
+
+The fourth finding is that the survey-based measure of industry exposure does not moderate any association. Section 4.3 offers a reason. Respondents to the survey rate food and health care among the most exposed industries, but firms in these industries hardly discuss biodiversity in their filings. Disclosure is concentrated in industries with a long history of environmental regulation. The high-exposure group therefore mixes industries in which the scores vary with industries in which they are almost always zero, and the test has little power.
+
+\subsection{Relation to earlier studies}
+
+The results help to place the earlier estimates. The positive association between disclosure and Tobin's Q in \citet{he2024} is not confirmed once industry-by-year effects, a lag and separate scores are used. The US sub-sample of \citet{cosma2025} gives a negative coefficient on the Negative score, and the within-firm estimate of this paper agrees with it in sign. Their positive coefficient on the Regulation score is not confirmed, and after 2021 the sign is negative. The finding of \citet{bach2025} that biodiversity risk goes with weaker performance is consistent in spirit with the result on tone, since both suggest that what firms write about biodiversity carries more information when it describes a threat. The studies on cash holdings by \citet{ahmad2024} and \citet{wang2026} show that managers respond to biodiversity risk. The present results suggest that investors respond more selectively.
+
+\subsection{Limitations}
+
+Several limitations remain. The scores measure what firms write and not their exposure, and they are positive for few firms. The within-firm estimates rest on fewer than two hundred firms and may not describe firms in general. The score file covers about half of the non-financial firm-years in Compustat, and the firms it covers may differ from those it does not. The reading of the score year as the fiscal year is inferred from the data and not confirmed by the authors of the scores, although the check under the other reading gives the same conclusion. Compustat reports the most recent CUSIP of a firm, so some firm-years may be matched imperfectly. The planned control for firm-level climate change exposure \citep{sautner2023} could not be included because the data were not merged for this draft. Tobin's Q uses the book value of assets in place of their replacement cost, and its distribution remains skewed after winsorising, with a maximum of \maxQ{}. Several hypotheses were tested on three scores, which raises the chance that one result is significant by accident. The sample covers firms incorporated in the United States, which is not a party to the Convention on Biological Diversity, so the results may not carry over to jurisdictions with mandatory reporting on nature. The estimates are associations and not causal effects.
+
+\section{Conclusion}
+
+This paper set out to test whether the discussion of biodiversity risk in 10-K filings is reflected in the valuation of US firms. The design separates the fact of disclosure from its tone and its regulatory content, lags the scores by one year, and compares estimates across firms within an industry and year with estimates within firms.
+
+The answer has three parts. The fact of disclosure is not related to valuation. Firms that discuss biodiversity are valued lower, but this reflects the industries they belong to. A more negative tone is followed by lower valuation within the same firm, with a coefficient of \coefFAllNeg{} for one more negative sentence. A discussion of regulation is associated with lower valuation only from fiscal year 2022, after the Kunming Declaration and the adoption of the global framework. The measure of industry exposure used here does not change these associations.
+
+For those who use the 10-K scores, the paper offers two practical points. A positive score is rare and sticky, so any estimate with firm fixed effects depends on a small group of firms and should report how many. The year in the score file is best read as the fiscal year of the report, and the file contains empty rows after the last report of a firm that should not be mistaken for filings without biodiversity content.
+
+Disclosure standards are changing. The recommendations of the Taskforce on Nature-related Financial Disclosures and the exposure draft of the International Sustainability Standards Board point towards more structured reporting on nature \citep{tnfd2023,issb2026}. Future work can test whether structured disclosure is priced differently from the narrative in 10-K filings, whether measures of impact such as the corporate biodiversity footprint identify the same firms as measures of disclosure, and whether the result on regulation holds as more years become available.
+
+\section*{Data and code availability}
+
+The biodiversity scores are public and can be obtained from the data page of \citet{giglio2026} at \url{https://www.biodiversityrisk.org/download/}. Compustat data are licensed and cannot be shared, but the extract can be rebuilt from the query specification that accompanies the code. The code that produces every table, figure and quoted number is available from the author.
+
+\begin{thebibliography}{99}
+\setlength{\itemsep}{2pt}
+
+\bibitem[Ahmad and Karpuz(2024)]{ahmad2024} Ahmad, M.F. and Karpuz, A. (2024) Beyond climate change risk: biodiversity and corporate cash holdings. \emph{Economics Letters}, 236, 111608. \url{https://doi.org/10.1016/j.econlet.2024.111608}
+
+\bibitem[Bach, Hoang and Le(2025)]{bach2025} Bach, T.N., Hoang, K. and Le, T. (2025) Biodiversity risk and firm performance: evidence from US firms. \emph{Business Strategy and the Environment}, 34(1), 1113--1132. \url{https://doi.org/10.1002/bse.4039}
+
+\bibitem[Berkman, Jona and Soderstrom(2024)]{berkman2024} Berkman, H., Jona, J. and Soderstrom, N. (2024) Firm-specific climate risk and market valuation. \emph{Accounting, Organizations and Society}, 112, 101547. \url{https://doi.org/10.1016/j.aos.2024.101547}
+
+\bibitem[Bolton and Kacperczyk(2021)]{bolton2021} Bolton, P. and Kacperczyk, M. (2021) Do investors care about carbon risk? \emph{Journal of Financial Economics}, 142(2), 517--549. \url{https://doi.org/10.1016/j.jfineco.2021.05.008}
+
+\bibitem[Campbell et~al.(2014)]{campbell2014} Campbell, J.L., Chen, H., Dhaliwal, D.S., Lu, H. and Steele, L.B. (2014) The information content of mandatory risk factor disclosures in corporate filings. \emph{Review of Accounting Studies}, 19(1), 396--455. \url{https://doi.org/10.1007/s11142-013-9258-3}
+
+\bibitem[{Convention on Biological Diversity}(2022)]{cbd2022} Convention on Biological Diversity (2022) \emph{Kunming-Montreal Global Biodiversity Framework}. Decision 15/4 of the Conference of the Parties, adopted 19 December 2022 (CBD/COP/DEC/15/4). Montreal: Secretariat of the Convention on Biological Diversity.
+
+\bibitem[Coqueret, Giroux and Zerbib(2025)]{coqueret2025} Coqueret, G., Giroux, T. and Zerbib, O.D. (2025) The biodiversity premium. \emph{Ecological Economics}, 228, 108435. \url{https://doi.org/10.1016/j.ecolecon.2024.108435}
+
+\bibitem[Cosma et~al.(2025)]{cosma2025} Cosma, S., Cosma, S., Pennetta, D. and Rimo, G. (2025) Does biodiversity matter for firm value? \emph{Journal of International Financial Markets, Institutions and Money}, 105, 102240. \url{https://doi.org/10.1016/j.intfin.2025.102240}
+
+\bibitem[Dasgupta(2021)]{dasgupta2021} Dasgupta, P. (2021) \emph{The economics of biodiversity: the Dasgupta Review}. London: HM Treasury.
+
+\bibitem[Flammer, Giroux and Heal(2025)]{flammer2025} Flammer, C., Giroux, T. and Heal, G.M. (2025) Biodiversity finance. \emph{Journal of Financial Economics}, 164, 103987. \url{https://doi.org/10.1016/j.jfineco.2024.103987}
+
+\bibitem[Garel et~al.(2024)]{garel2024} Garel, A., Romec, A., Sautner, Z. and Wagner, A.F. (2024) Do investors care about biodiversity? \emph{Review of Finance}, 28(4), 1151--1186. \url{https://doi.org/10.1093/rof/rfae010}
+
+\bibitem[Giglio et~al.(2026)]{giglio2026} Giglio, S., Kuchler, T., Stroebel, J. and Zeng, X. (2026) Biodiversity risk. \emph{Review of Finance}, 30(1), 131--161. \url{https://doi.org/10.1093/rof/rfaf063}
+
+\bibitem[He(2024)]{he2024} He, X. (2024) An empirical study on biodiversity disclosure and firm's market value in North America based on linear regression model. \emph{Highlights in Business, Economics and Management}, 41, 686--691. \url{https://doi.org/10.54097/b35g5y31}
+
+\bibitem[Hoepner et~al.(2024)]{hoepner2024} Hoepner, A.G.F., Oikonomou, I., Sautner, Z., Starks, L.T. and Zhou, X.Y. (2024) ESG shareholder engagement and downside risk. \emph{Review of Finance}, 28(2), 483--510.
+
+\bibitem[{ISSB}(2026)]{issb2026} International Sustainability Standards Board (2026) \emph{Exposure Draft: IFRS Sustainability Disclosure Practice Statement 1 Nature-related Disclosures}. London: IFRS Foundation.
+
+\bibitem[Karolyi and Tobin-de la Puente(2023)]{karolyi2023} Karolyi, G.A. and Tobin-de la Puente, J. (2023) Biodiversity finance: a call for research into financing nature. \emph{Financial Management}, 52(2), 231--251. \url{https://doi.org/10.1111/fima.12417}
+
+\bibitem[Krueger, Sautner and Starks(2020)]{krueger2020} Krueger, P., Sautner, Z. and Starks, L.T. (2020) The importance of climate risks for institutional investors. \emph{Review of Financial Studies}, 33(3), 1067--1111. \url{https://doi.org/10.1093/rfs/hhz137}
+
+\bibitem[Lang and Stulz(1994)]{lang1994} Lang, L.H.P. and Stulz, R.M. (1994) Tobin's q, corporate diversification, and firm performance. \emph{Journal of Political Economy}, 102(6), 1248--1280. \url{https://doi.org/10.1086/261970}
+
+\bibitem[Matsumura, Prakash and Vera-Mu\~noz(2014)]{matsumura2014} Matsumura, E.M., Prakash, R. and Vera-Mu\~noz, S.C. (2014) Firm-value effects of carbon emissions and carbon disclosures. \emph{The Accounting Review}, 89(2), 695--724. \url{https://doi.org/10.2308/accr-50629}
+
+\bibitem[P\'astor, Stambaugh and Taylor(2021)]{pastor2021} P\'astor, \v{L}., Stambaugh, R.F. and Taylor, L.A. (2021) Sustainable investing in equilibrium. \emph{Journal of Financial Economics}, 142(2), 550--571. \url{https://doi.org/10.1016/j.jfineco.2020.12.011}
+
+\bibitem[Petersen(2009)]{petersen2009} Petersen, M.A. (2009) Estimating standard errors in finance panel data sets: comparing approaches. \emph{Review of Financial Studies}, 22(1), 435--480. \url{https://doi.org/10.1093/rfs/hhn053}
+
+\bibitem[Roberts and Whited(2013)]{roberts2013} Roberts, M.R. and Whited, T.M. (2013) Endogeneity in empirical corporate finance. In Constantinides, G.M., Harris, M. and Stulz, R.M. (eds.) \emph{Handbook of the Economics of Finance}, vol. 2A. Amsterdam: Elsevier, 493--572. \url{https://doi.org/10.1016/B978-0-44-453594-8.00007-0}
+
+\bibitem[Sautner et~al.(2023)]{sautner2023} Sautner, Z., van Lent, L., Vilkov, G. and Zhang, R. (2023) Firm-level climate change exposure. \emph{Journal of Finance}, 78(3), 1449--1498. \url{https://doi.org/10.1111/jofi.13219}
+
+\bibitem[{TNFD}(2023)]{tnfd2023} Taskforce on Nature-related Financial Disclosures (2023) \emph{Recommendations of the Taskforce on Nature-related Financial Disclosures}. September 2023. London: TNFD.
+
+\bibitem[Tobin(1969)]{tobin1969} Tobin, J. (1969) A general equilibrium approach to monetary theory. \emph{Journal of Money, Credit and Banking}, 1(1), 15--29.
+
+\bibitem[Verrecchia(1983)]{verrecchia1983} Verrecchia, R.E. (1983) Discretionary disclosure. \emph{Journal of Accounting and Economics}, 5, 179--194.
+
+\bibitem[Wang, Xu and Yang(2026)]{wang2026} Wang, K., Xu, T. and Yang, M. (2026) Pressure-driven cash holdings under biodiversity risk. \emph{European Financial Management}, advance online publication. \url{https://doi.org/10.1111/eufm.70064}
+
+\bibitem[{World Economic Forum}(2020)]{wef2020} World Economic Forum (2020) \emph{Nature risk rising: why the crisis engulfing nature matters for business and the economy}. Geneva: World Economic Forum.
+
+\end{thebibliography}
+
+\appendix
+\renewcommand{\thetable}{A\arabic{table}}
+\setcounter{table}{0}
+\section{Additional tables}
+
+\begin{table}[!htbp]
+\centering\small
+\caption{Variable definitions}\label{tab:variables}
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{3.3cm}>{\raggedright\arraybackslash}p{3.6cm}>{\raggedright\arraybackslash}X@{}}
+\toprule
+Variable & Name in the data & Definition and source \\
+\midrule
+Tobin's Q & \texttt{dv\_tobin\_q\_w} & $(AT - CEQ + PRCC\_F \times CSHO) / AT$, winsorised. Compustat. \\
+Log of Tobin's Q & \texttt{dv\_ln\_tobin\_q\_w} & Natural logarithm of Tobin's Q, winsorised. Compustat. \\
+Industry-adjusted Q & \texttt{dv\_tobin\_q\_indadj} & Tobin's Q minus the median of its GICS industry group and fiscal year. Compustat. \\
+Count & \texttt{bd\_count\_lag} & One if the 10-K of the previous fiscal year contains at least two sentences on biodiversity. Giglio et al. \\
+Negative & \texttt{bd\_negative\_lag} & Negative minus positive biodiversity sentences in the 10-K of the previous fiscal year. Giglio et al. \\
+Regulation & \texttt{bd\_regulation\_lag} & One if that 10-K contains at least two biodiversity sentences of which at least one concerns regulation. Giglio et al. \\
+Size & \texttt{ctl\_size\_w} & Natural logarithm of total assets. Compustat item AT. \\
+Leverage & \texttt{ctl\_leverage\_w} & $(DLTT + DLC) / AT$. Compustat. \\
+Profitability & \texttt{ctl\_roa\_w} & $OIBDP / AT$. Compustat. \\
+Tangibility & \texttt{ctl\_tangibility\_w} & $PPENT / AT$. Compustat. \\
+Sales growth & \texttt{ctl\_sales\_growth\_w} & Sales divided by sales of the previous fiscal year, minus one. Compustat item SALE. \\
+R\&D intensity & \texttt{ctl\_rd\_w} & $XRD / AT$, with missing XRD set to zero. Compustat. \\
+R\&D missing & \texttt{ctl\_rd\_missing} & One if XRD is missing. Compustat. \\
+Capital expenditure & \texttt{ctl\_capex\_w} & $CAPX / AT$. Compustat. \\
+Cash holdings & \texttt{ctl\_cash\_w} & $CHE / AT$. Compustat. \\
+Dividend payer & \texttt{ctl\_dividend} & One if DVC is above zero. Compustat. \\
+High & \texttt{ind\_bio\_high} & One if the survey-based exposure of the GICS industry group of the firm is above the two-thirds quantile of the non-financial groups. Giglio et al. \\
+Post & \texttt{ev\_post} & One for fiscal years from 2022. Compustat. \\
+\bottomrule
+\end{tabularx}
+\tablenote{Note. The suffix \texttt{\_lag} marks a value known before Tobin's Q is measured, and \texttt{\_w} marks winsorising at the 1st and 99th percentiles.}
+\end{table}
+
+\begin{table}[!htbp]
+\centering\small
+\caption{Test of the meaning of the score year}\label{tab:alignment}
+\widetable{tables/tab_alignment}
+\tablenote{Note. Firms with a December year end. A priced fiscal year is a fiscal year with a positive market value of equity in Compustat. A row with a score other than zero has a filing behind it. The rows one year after the last priced fiscal year are all empty, which supports the reading of the score year as the fiscal year.}
+\end{table}
+
+\begin{table}[!htbp]
+\centering\footnotesize
+\caption{Correlations}\label{tab:correlations}
+\widetable{tables/tab_correlations}
+\tablenote{Note. Pearson correlations in the regression sample of \nFinal{} firm-years. The column numbers refer to the variables in the rows.}
+\end{table}
+
+\end{document}

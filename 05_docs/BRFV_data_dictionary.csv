@@ -1,0 +1,64 @@
+variable,label,type,unit,stage,source,definition
+ticker,Ticker in the score file,text,,raw,Giglio et al. score file,Read as text. The tickers NA and TRUE exist.
+year,Year label in the score file,integer,year,raw,Giglio et al. score file,Meaning (fiscal or filing year) is not stated in the codebook; tested in step 04.
+cusip,CUSIP in the score file,text,,raw,Giglio et al. score file,"Nine characters to 2023, eight in 2024, empty in rows without a score."
+count,Count score,0/1,,raw,Giglio et al. score file,1 if the 10-K mentions biodiversity in at least two sentences.
+negative,Negative score,integer,sentences,raw,Giglio et al. score file,Negative biodiversity sentences minus positive ones in the 10-K.
+regulation,Regulation score,0/1,,raw,Giglio et al. score file,1 if count = 1 and at least one of the sentences is about regulation.
+id_gvkey,Compustat firm identifier,text,,"interim, panel",Compustat gvkey,"Six characters, zero padded. Firm key of the panel."
+id_cusip8,First eight characters of the CUSIP,text,,"interim, panel",Compustat cusip; score file cusip,First merge key between scores and Compustat.
+id_ticker,Ticker,text,,"interim, panel",Compustat tic; score file ticker,"Second merge key, used only for rows not matched on CUSIP."
+id_conm,Company name,text,,"interim, panel",Compustat conm,For reading and spot checks only.
+t_fyear,Fiscal year,integer,year,"interim, panel",Compustat fyear,Time key of the panel. Tobin's Q is measured at the end of this fiscal year.
+t_datadate,Fiscal year end date,date,,"interim, panel",Compustat datadate,
+t_fye_month,Month of the fiscal year end,integer,month,"interim, panel",Compustat datadate,Used for the December-only checks.
+t_score_year,Score year attached to the firm-year,integer,year,panel,step 04,"t_fyear - 1 under the fiscal convention, t_fyear under the filing convention."
+mrg_source,How the score was matched,text,,panel,step 04,"cusip8, ticker or none."
+geo_fic,Country of incorporation,text,ISO code,"interim, panel",Compustat fic,Sample keeps USA.
+fin_curcd,Reporting currency,text,ISO code,"interim, panel",Compustat curcd,Sample keeps USD.
+ind_sic,SIC code,integer,,"interim, panel","Compustat sich, else sic",Historical code where available. 6000-6999 is excluded.
+ind_sic2,Two-digit SIC,integer,,"interim, panel",step 03,floor(ind_sic / 100).
+ind_gics4,GICS industry group,text,,"interim, panel",Compustat ggroup,Four-digit code. Industry key for fixed effects and exposure.
+fin_at,Total assets,number,USD million,"interim, panel",Compustat AT,
+fin_ceq,Common equity,number,USD million,"interim, panel",Compustat CEQ,Book value of equity.
+fin_sale,Sales,number,USD million,"interim, panel",Compustat SALE,
+fin_mve,Market value of equity,number,USD million,"interim, panel",Compustat PRCC_F x CSHO,Share price at fiscal year end times shares outstanding.
+dv_tobin_q,Tobin's Q,number,ratio,"interim, panel",step 03,(AT - CEQ + PRCC_F x CSHO) / AT.
+dv_ln_tobin_q,Log of Tobin's Q,number,log ratio,"interim, panel",step 03,ln(dv_tobin_q).
+dv_tobin_q_w,"Tobin's Q, winsorised",number,ratio,panel,step 04,dv_tobin_q clipped at its 1st and 99th percentile. Main dependent variable.
+dv_ln_tobin_q_w,"Log of Tobin's Q, winsorised",number,log ratio,panel,step 04,Robustness check R1.
+dv_tobin_q_indadj,Industry-adjusted Tobin's Q,number,ratio,panel,step 04,dv_tobin_q_w minus the median of its industry group and fiscal year. Robustness check R2.
+bd_count,"Count score, clean",0/1,,interim,step 01,count as integer.
+bd_negative,"Negative score, clean",integer,sentences,interim,step 01,negative as integer.
+bd_regulation,"Regulation score, clean",0/1,,interim,step 01,regulation as integer.
+bd_negative_pos,Net negative tone,0/1,,interim,step 01,1 if bd_negative > 0.
+bd_count_lag,Count score known before Q is measured,0/1,,panel,step 04,bd_count of t_score_year.
+bd_negative_lag,Negative score known before Q is measured,integer,sentences,panel,step 04,bd_negative of t_score_year.
+bd_regulation_lag,Regulation score known before Q is measured,0/1,,panel,step 04,bd_regulation of t_score_year.
+bd_negative_pos_lag,Net negative tone known before Q is measured,0/1,,panel,step 04,bd_negative_pos of t_score_year.
+bd_count_lead,Count score disclosed two fiscal years later,0/1,,step 07 only,step 07,Placebo regressor of robustness check R9; same pattern for negative and regulation.
+bd_count_alt,Count score of the next score year,0/1,,processed,step 04,"Regressor of robustness check R10, the other reading of the score year; same pattern for negative and regulation. Empty when that score year is after 2023."
+ctl_size,Firm size,number,log USD million,"interim, panel",step 03,ln(AT).
+ctl_leverage,Leverage,number,ratio,"interim, panel",step 03,(DLTT + DLC) / AT. A missing component counts as zero if the other is present.
+ctl_roa,Profitability,number,ratio,"interim, panel",step 03,OIBDP / AT.
+ctl_tangibility,Asset tangibility,number,ratio,"interim, panel",step 03,PPENT / AT.
+ctl_sales_growth,Sales growth,number,ratio,"interim, panel",step 03,"SALE(t) / SALE(t-1) - 1, only when the previous fiscal year is present."
+ctl_rd,R&D intensity,number,ratio,"interim, panel",step 03,"XRD / AT, with missing XRD set to zero."
+ctl_rd_missing,R&D not reported,0/1,,"interim, panel",step 03,1 if XRD is missing.
+ctl_capex,Capital expenditure,number,ratio,"interim, panel",step 03,CAPX / AT.
+ctl_cash,Cash holdings,number,ratio,"interim, panel",step 03,CHE / AT.
+ctl_dividend,Dividend payer,0/1,,"interim, panel",step 03,1 if DVC > 0.
+ctl_*_w,Winsorised controls,number,,panel,step 04,Each continuous control clipped at its 1st and 99th percentile. Used in every model.
+ind_bio_survey_trans,"Survey score, transition risk",number,share,"interim, panel",survey_biodiversity_scores.csv,Share of respondents naming the industry as affected by transition risk.
+ind_bio_survey_phys,"Survey score, physical risk",number,share,"interim, panel",survey_biodiversity_scores.csv,Share of respondents naming the industry as affected by physical risk.
+ind_bio_survey_avg,"Survey score, average",number,share,"interim, panel",survey_biodiversity_scores.csv,Average of the two shares.
+ind_bio_survey_z,"Survey score, standardised",number,sd,"interim, panel",step 01,ind_bio_survey_avg standardised across non-financial industry groups.
+ind_bio_holding,Holdings-based industry score,number,,"interim, panel",holding_biodiversity_scores.csv,"Industry market weight minus weight in biodiversity funds, scaled by market weight."
+ind_bio_cdp,CDP-based industry score,number,,"interim, panel",cdp_biodiversity_scores.csv,Value-weighted share of firms with activities in or near biodiversity-sensitive areas.
+ind_is_financial,Financial or real estate industry group,0/1,,interim,step 01,"GICS 4010, 4020, 4030, 6010, 6020."
+ind_bio_high,High biodiversity exposure industry,0/1,,"interim, panel",step 01,1 if ind_bio_survey_avg is above the two-thirds quantile of the non-financial groups.
+ev_post,After the Kunming Declaration,0/1,,panel,step 04,1 for fiscal years from 2022 (the declaration is dated October 2021).
+cc_exposure_lag,Firm-level climate change exposure (optional),number,,panel,Sautner et al. (2023) data release,Exposure in t_score_year. Present only if the climate file is supplied.
+ix_<score>_high,Score times high-exposure industry,number,,panel,step 04,"For count, negative and regulation."
+ix_<score>_post,Score times ev_post,number,,panel,step 04,"For count, negative and regulation."
+fe_ind_year,Industry group by fiscal year,text,,panel,step 04,ind_gics4 and t_fyear joined; fixed-effect key of the main models.
