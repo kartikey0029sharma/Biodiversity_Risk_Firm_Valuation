@@ -17,7 +17,7 @@
 | Controls | yes | yes | yes |
 | Fixed effects | industry group x year | industry group x year | industry group x year |
 | Firm-years | 16,758 | 16,758 | 16,758 |
-| Firms | 2,769 | 2,769 | 2,769 |
+| Firms | 2,767 | 2,767 | 2,767 |
 | R-squared | 0.375 | 0.375 | 0.375 |
 | Within R-squared | 0.229 | 0.229 | 0.229 |
 

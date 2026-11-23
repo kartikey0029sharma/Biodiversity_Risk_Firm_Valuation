@@ -2,7 +2,9 @@
 
 Project : Biodiversity Risk Disclosure and Firm Valuation (BRFV)
 Input   : 03_output/tables/BRFV_T*.csv, 03_output/figures/BRFV_F0*.png,
-          01_data/interim/BRFV_industry_exposure_gics4.csv
+          01_data/interim/BRFV_industry_exposure_gics4.csv,
+          01_data/raw/edgar/BRFV_edgar_timing_check_20261123.csv (if present) with
+          01_data/interim/BRFV_scores_firmyear_clean.csv
 Output  : in the current draft folder, 04_manuscript/<DRAFT_CURRENT of brfv_00_config.py>
           tables/*.tex   one tabular per table
           numbers.tex    macros for the numbers quoted in the text
@@ -11,10 +13,12 @@ Output  : in the current draft folder, 04_manuscript/<DRAFT_CURRENT of brfv_00_c
 Rule    : the draft never types a result by hand. Tables are read with \\input and
           numbers in the text are macros from numbers.tex, so a rerun of the
           pipeline updates the manuscript.
+Rounding: every figure is rounded once, from the value as computed. Regression
+          cells and quoted coefficients are both taken from the *_tidy.csv files,
+          so a number in the text and the same number in a table cannot differ.
 """
 from __future__ import annotations
 
-import re
 import shutil
 import sys
 
@@ -46,6 +50,7 @@ LABELS = {
     "ctl_capex_w": "Capital expenditure", "ctl_cash_w": "Cash holdings", "ctl_rd_missing": r"R\&D missing",
     "ctl_dividend": "Dividend payer", "ind_bio_survey_avg": "Industry exposure score",
     "ind_bio_high": "High exposure industry",
+    "slope_post": "Slope from fiscal year 2022",
 }
 GICS = {
     "1010": "Energy", "1510": "Materials", "2010": "Capital Goods", "2020": "Commercial and Professional Services",
@@ -62,9 +67,22 @@ CHECKS = {
     "R1": "R1 Log of Tobin's Q", "R2": "R2 Industry-adjusted Q with year effects", "R3": "R3 Utilities excluded",
     "R4": "R4 Fiscal year 2020 excluded", "R5": "R5 December year ends only", "R6": "R6 CUSIP matches only",
     "R7": "R7 Disclosing firms only, firm and year effects", "R8": "R8 Clustered by industry group",
-    "R9": "R9 Placebo with the score two years ahead", "R10": "R10 Score of the next score year",
+    "R9": "R9 Placebo with the score two years ahead", "R10": "R10 Score of the same year",
 }
-NUMBER = re.compile(r"^\(?(-?\d+\.\d+)\)?(\**)$")
+TONE_CHECKS = {
+    "W0": "Main estimate, as in Table 9", "W1": "W1 Log of Tobin's Q",
+    "W2": r"W2 Firm effects and industry group $\times$ year effects", "W3": "W3 Utilities excluded",
+    "W4": "W4 Fiscal year 2020 excluded", "W5": "W5 December year ends only", "W6": "W6 CUSIP matches only",
+    "W7": "W7 Disclosing firms only", "W8": "W8 Clustered by industry group",
+    "W9": "W9 Negative score two years ahead, added to the model", "W10": "W10 Score of the same year",
+}
+LATER_CHECKS = {
+    "P0": "Main estimate, as in Table 11", "P1": "P1 Log of Tobin's Q", "P2": "P2 Industry-adjusted Q with year effects",
+    "P3": "P3 Utilities excluded", "P4": "P4 Fiscal year 2020 excluded", "P5": "P5 December year ends only",
+    "P6": "P6 CUSIP matches only", "P7": "P7 Clustered by industry group", "P8": "P8 Score of the same year",
+    "P9": "P9 Three scores and their interactions together",
+}
+WORDS = ["Zero", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten"]
 
 
 # ---------------------------------------------------------------- helpers
@@ -104,21 +122,16 @@ def tabular(spec: str, head: list[str], body: list[str], foot: list[str] | None 
 
 
 # ------------------------------------------------------ regression tables
-def regression_cell(text: str) -> str:
-    text = text.strip()
-    match = NUMBER.match(text)
-    if not match:
-        return escape(text)
-    value = num(match.group(1))
-    if text.startswith("("):
-        return f"({value})"
-    return value + (f"$^{{{match.group(2)}}}$" if match.group(2) else "")
+def starred(coef: float, p: float) -> str:
+    return num(coef) + (f"$^{{{stars(float(p))}}}$" if stars(float(p)) else "")
 
 
 def regression_table(stem: str, name: str) -> None:
+    """One column per model. The layout comes from the wide table, the values from the tidy file."""
     table = read(stem)
+    values = pd.read_csv(cfg.DIR_TABLES / f"{stem}_tidy.csv").set_index(["model", "term"])
     models = [c for c in table.columns if c != "term"]
-    body, foot = [], []
+    body, foot, current = [], [], ""
     for _, row in table.iterrows():
         term, cells = row["term"], [row[m] for m in models]
         if term == "Fixed effects":
@@ -130,9 +143,16 @@ def regression_table(stem: str, name: str) -> None:
             foot.append(f"{term} & " + " & ".join(cells) + r" \\")
         elif term in ("R-squared", "Within R-squared"):
             foot.append(term.replace("R-squared", "$R^2$") + " & " + " & ".join(cells) + r" \\")
+        elif term:
+            current = term
+            if term == "slope_post":
+                body.append(r"\addlinespace")
+            shown = [starred(values.loc[(m, term), "coef"], values.loc[(m, term), "p"]) if c.strip() else ""
+                     for m, c in zip(models, cells)]
+            body.append(f"{LABELS.get(term, escape(term))} & " + " & ".join(shown) + r" \\")
         else:
-            label = LABELS.get(term, escape(term)) if term else ""
-            body.append(f"{label} & " + " & ".join(regression_cell(c) for c in cells) + r" \\")
+            shown = [f"({num(values.loc[(m, current), 'se'])})" if c.strip() else "" for m, c in zip(models, cells)]
+            body.append(" & " + " & ".join(shown) + r" \\")
     head = [" & " + " & ".join(f"({i})" for i in range(1, len(models) + 1)) + r" \\",
             "Model & " + " & ".join(models) + r" \\"]
     write(name, tabular("l" + "c" * len(models), head, body, foot))
@@ -158,6 +178,156 @@ def robustness_table() -> None:
         body.append(" & " + " & ".join(errors) + r" & & \\")
     head = [r"Check & Count & Negative & Regulation & Firm-years & Firms \\"]
     write("tab_robustness", tabular("lccccc", head, body))
+
+
+def checks(stem: str) -> pd.DataFrame:
+    table = pd.read_csv(cfg.DIR_TABLES / f"{stem}.csv")
+    table["code"] = table["check"].str.split().str[0]
+    return table
+
+
+def tone_checks_table() -> None:
+    """Coefficient on Negative with firm effects under each check, three scores together and alone."""
+    table = checks("BRFV_T15_tone_within_firms_checks")
+    body = []
+    for code in list(dict.fromkeys(table["code"])):
+        part = table.loc[table["code"] == code]
+        for role in list(dict.fromkeys(part["role"])):
+            rows = part.loc[part["role"] == role].set_index("version")
+            together, alone = rows.loc["three scores"], rows.loc["alone"]
+            assert together["n_obs"] == alone["n_obs"], f"{code}: the two versions must use the same firm-years"
+            label = TONE_CHECKS.get(code, code)
+            counts = f"{whole(together['n_obs'])} & {whole(together['n_firms'])}"
+            if code == "W9":
+                label, counts = (label, counts) if role == "lead" else (r"\quad Negative of the previous year in the same model", " & ")
+            body.append(f"{label} & {starred(together['coef'], together['p'])} & {starred(alone['coef'], alone['p'])} & {counts}" + r" \\")
+            body.append(f" & ({num(together['se'])}) & ({num(alone['se'])}) & & " + r"\\")
+    body.insert(2, r"\midrule")
+    head = [r" & \multicolumn{2}{c}{Coefficient on Negative} & & \\", r"\cmidrule(lr){2-3}",
+            r"Check & Three scores together & Negative alone & Firm-years & Firms \\"]
+    write("tab_tone_checks", tabular("lcccc", head, body))
+
+
+def later_checks_table() -> None:
+    """Regulation before fiscal year 2022, the change from that year and the slope in the later period."""
+    table = checks("BRFV_T16_regulation_after_2021_checks")
+    body = []
+    for code in list(dict.fromkeys(table["code"])):
+        part = table.loc[table["code"] == code].set_index("role")
+        order = [part.loc[role] for role in ("score", "interaction", "slope_post")]
+        body.append(f"{LATER_CHECKS.get(code, code)} & " + " & ".join(starred(r["coef"], r["p"]) for r in order)
+                    + f" & {whole(order[0]['n_obs'])} & {whole(order[0]['n_firms'])}" + r" \\")
+        body.append(" & " + " & ".join(f"({num(r['se'])})" for r in order) + r" & & \\")
+    body.insert(2, r"\midrule")
+    head = [r"Check & Regulation & Regulation $\times$ Post & Slope from fiscal year 2022 & Firm-years & Firms \\"]
+    write("tab_regulation_checks", tabular("lccccc", head, body))
+
+
+# ------------------------------------------------- check against EDGAR
+def edgar_reading(first: float, middle: float, last: float) -> str:
+    """What the counts for the 10-Ks filed in the year before, in and after the first year with Count = 1 say.
+
+    The rule was fixed before the filings were read. The text has to grow by two sentences or more
+    between the outer filings. If the middle filing is already at least halfway, the new text was
+    filed in the score year (filing year). If not, it came with the report on that year (fiscal year).
+    """
+    if last - first < 2:
+        return "none"
+    return "filing" if middle >= (first + last) / 2 else "fiscal"
+
+
+def edgar_tables() -> dict[str, str]:
+    """Tables for the check of the score year, and the counts quoted in the text.
+
+    The file was collected by hand from EDGAR. Everything that can be checked against the
+    score file is checked here, so that a slip in the file stops the step.
+    """
+    check = pd.read_csv(cfg.RAW_EDGAR_CHECK, dtype=str, keep_default_na=False)
+    scores = u.read_csv_as_text(cfg.INT_SCORES)
+    for column in ("t_score_year", "bd_count", "bd_negative", "bd_regulation"):
+        scores[column] = scores[column].astype(int)
+    scores = scores.loc[scores["t_score_year"] <= cfg.SCORE_YEAR_MAX_MAIN]
+    count = scores.pivot(index="id_ticker", columns="t_score_year", values="bd_count")
+    quiet = scores.assign(any=(scores[["bd_count", "bd_negative", "bd_regulation"]] != 0).any(axis=1).astype(int)).pivot(
+        index="id_ticker", columns="t_score_year", values="any")
+    cusip = scores.pivot(index="id_ticker", columns="t_score_year", values="id_cusip8")
+    span = scores.groupby("id_ticker")["t_score_year"].agg(["min", "max"])
+    out: dict[str, str] = {}
+
+    # ---- continuing firms: in which filing does the text change
+    switch = check.loc[check["panel"] == "switch"]
+    pool = set()
+    for year in range(2015, 2023):
+        years = [year - 3, year - 2, year - 1, year, year + 1]
+        ok = count[years].notna().all(axis=1) & (quiet[years[:3]] == 0).all(axis=1) & (count[years[3:]] == 1).all(axis=1)
+        ok &= cusip[years].nunique(axis=1) == 1
+        pool |= {(ticker, year) for ticker in count.index[ok]}
+    listed = {(r["ticker"], int(r["ref_year"])) for _, r in switch.iterrows()}
+    assert listed == pool, f"the firms in the EDGAR file are not those that the rule gives: {sorted(listed ^ pool)}"
+    counted = switch.loc[switch["status"] == "counted"].copy()
+    assert (counted["fye_month"] == "12").all()
+    body, tally = [], {"filing": 0, "fiscal": 0, "none": 0}
+    words = {"filing": "Filing year", "fiscal": "Fiscal year", "none": "No clear change"}
+    for _, r in counted.sort_values("ticker").iterrows():
+        n = [int(r["n_1"]), int(r["n_2"]), int(r["n_3"])]
+        years = [int(r[f"filed_{k}"][:4]) for k in (1, 2, 3)]
+        assert years == [int(r["ref_year"]) - 1, int(r["ref_year"]), int(r["ref_year"]) + 1], r["ticker"]
+        reading = edgar_reading(*n)
+        tally[reading] += 1
+        body.append(f"{r['ticker']} & {escape(r['company'])} & {r['ref_year']} & {n[0]} & {n[1]} & {n[2]} & {words[reading]}" + r" \\")
+    head = [r" & & & \multicolumn{3}{c}{Sentences in the 10-K filed} & \\", r"\cmidrule(lr){4-6}",
+            r"Ticker & Company & Year & the year before & in that year & the year after & Supports \\"]
+    write("tab_edgar_switch", tabular("llrrrrl", head, body))
+    out.update(nEdgarPool=str(len(pool)), nEdgarListed=str(int((switch["status"] != "no_current_ticker").sum())),
+               nEdgarSwitch=str(len(counted)), nEdgarClear=str(tally["filing"] + tally["fiscal"]),
+               nEdgarFiling=str(tally["filing"]), nEdgarFiscal=str(tally["fiscal"]))
+
+    # ---- full histories of four firms
+    history = check.loc[check["panel"] == "history"]
+    tickers = list(dict.fromkeys(history["ticker"]))
+    body = []
+    for year in sorted({int(y) for y in history["ref_year"]}):
+        if year > cfg.SCORE_YEAR_MAX_MAIN:
+            continue
+        cells = []
+        for ticker in tickers:
+            n = history.loc[(history["ticker"] == ticker) & (history["ref_year"] == str(year)), "n_1"].iloc[0]
+            cells += [n, str(int(count.loc[ticker, year]))]
+        body.append(f"{year} & " + " & ".join(cells) + r" \\")
+    head = [" & " + " & ".join(rf"\multicolumn{{2}}{{c}}{{{ticker}}}" for ticker in tickers) + r" \\",
+            "".join(rf"\cmidrule(lr){{{2 * i + 2}-{2 * i + 3}}}" for i in range(len(tickers))),
+            "Year & " + " & ".join("Sentences & Count" for _ in tickers) + r" \\"]
+    write("tab_edgar_history", tabular("l" + "rr" * len(tickers), head, body))
+
+    # ---- firms that left: a 10-K was filed in the last year, and the last row is empty
+    last = span["max"]
+    leavers = check.loc[check["panel"] == "leaver"]
+    body = []
+    for _, r in leavers.sort_values("ticker").iterrows():
+        ticker, year = r["ticker"], int(r["ref_year"])
+        assert span.loc[ticker, "max"] == year and r["filed_1"][:4] == str(year), ticker
+        assert count.loc[ticker, year - 1] == 1 and quiet.loc[ticker, year] == 0, ticker
+        company = r["company"].split(" (now ")[0]      # the name the firm had when it filed
+        body.append(f"{ticker} & {escape(company)} & {year} & 1 & 0 & {r['filed_1']}" + r" \\")
+    head = [r" & & & \multicolumn{2}{c}{Count score} & \\", r"\cmidrule(lr){4-5}",
+            r"Ticker & Company & Last year & the year before & in the last year & Form 10-K filed on \\"]
+    write("tab_edgar_leavers", tabular("llrrrl", head, body))
+    ended = span.loc[span["max"].between(2015, 2021)].index
+    n_pool = sum(1 for ticker in ended
+                 if (last[ticker] - 1) in count.columns and count.loc[ticker, last[ticker] - 1] == 1 and count.loc[ticker, last[ticker]] == 0)
+    out.update(nEdgarLeavers=str(len(leavers)), nEdgarLeaverPool=str(n_pool))
+
+    # ---- new tickers with a positive first row: was a 10-K filed in that first year
+    entrants = check.loc[check["panel"] == "entrant"]
+    first_rows = scores.loc[scores["t_score_year"] == scores["id_ticker"].map(span["min"])]
+    rule = set(first_rows.loc[first_rows["t_score_year"].between(2015, 2022) & (first_rows["bd_count"] == 1), "id_ticker"])
+    assert set(entrants["ticker"]) == rule, f"entrants in the EDGAR file differ from the rule: {sorted(set(entrants['ticker']) ^ rule)}"
+    new = entrants.loc[entrants["status"] == "first_10k_in_first_year"]
+    assert (new["filed_1"].str[:4] == new["ref_year"]).all()
+    out.update(nEdgarEntrantPool=str(len(entrants)), nEdgarEntrantListed=str(int((entrants["status"] != "no_current_ticker").sum())),
+               nEdgarEntrantNew=str(len(new)), nEdgarEntrantOld=str(int((entrants["status"] == "filed_in_earlier_years").sum())),
+               nEdgarEntrantOther=str(int((entrants["status"] == "ticker_now_used_by_another_company").sum())))
+    return out
 
 
 # ------------------------------------------------------ descriptive tables
@@ -193,7 +363,8 @@ def industry() -> None:
     body = []
     for _, row in survey.sort_values("avg", ascending=False, kind="stable").iterrows():
         code = row["ind_gics4"]
-        group = "Financial" if row["ind_is_financial"] == "1" else "High" if row["ind_bio_high"] == "1" else "Other"
+        high = row["ind_bio_high"] == "1"
+        group = ("Financial, high" if high else "Financial") if row["ind_is_financial"] == "1" else "High" if high else "Other"
         if code in sample.index:
             s = sample.loc[code]
             tail = f"{whole(s['n_firm_years'])} & {float(s['pct_count1']):.1f} & {float(s['mean_tobin_q']):.2f}"
@@ -324,8 +495,8 @@ def sample_flow(table: pd.DataFrame) -> None:
 
 
 # ---------------------------------------------------------------- numbers
-def numbers(table_attrition: pd.DataFrame) -> None:
-    macros: dict[str, str] = {}
+def numbers(table_attrition: pd.DataFrame, edgar: dict[str, str] | None = None) -> None:
+    macros: dict[str, str] = dict(edgar or {})
 
     def put(name: str, value: str) -> None:
         assert name.isalpha(), name
@@ -349,7 +520,7 @@ def numbers(table_attrition: pd.DataFrame) -> None:
     put("maxQ", f"{float(s.loc['dv_tobin_q_w', 'max']):.2f}")
     put("pctCount", f"{100 * float(s.loc['bd_count_lag', 'mean']):.1f}")
     put("pctReg", f"{100 * float(s.loc['bd_regulation_lag', 'mean']):.1f}")
-    put("pctHigh", f"{100 * float(s.loc['ind_bio_high', 'mean']):.1f}")
+    put("pctHigh", f"{100 * float(s.loc['ind_bio_high', 'mean']):.1f}")   # the mean is stored unrounded, so this is rounded once
     m = read("BRFV_T06_means_by_disclosure").set_index("variable")
     put("meanQOne", f"{float(m.loc['dv_tobin_q_w', 'mean_count1']):.2f}")
     put("meanQZero", f"{float(m.loc['dv_tobin_q_w', 'mean_count0']):.2f}")
@@ -371,16 +542,32 @@ def numbers(table_attrition: pd.DataFrame) -> None:
         short = {"Count": "count", "Neg": "negative", "Reg": "regulation"}[prefix]
         coefficient("B" + prefix, b, f"B{number}", score)
         coefficient("BAll" + prefix, b, "B4", score)
+        coefficient("BNo" + prefix, b, "BN", score)   # no controls, industry group by year effects
         coefficient("F" + prefix, f, f"F{number}", score)
         coefficient("FAll" + prefix, f, "F4", score)
+        coefficient("FNo" + prefix, f, "FN", score)   # no controls, firm and year effects
         coefficient("X" + prefix, x, f"X{number}", f"ix_{short}_high")
         coefficient("E" + prefix, e, f"E{number}", f"ix_{short}_post")
         coefficient("EF" + prefix, e, f"EF{number}", f"ix_{short}_post")
         coefficient("ED" + prefix, e, f"ED{number}", f"ix_{short}_post")
+        for family in ("E", "EF", "ED"):   # slope before fiscal year 2022 and slope from that year
+            coefficient("Pre" + family + prefix, e, f"{family}{number}", score)
+            coefficient("Slope" + family + prefix, e, f"{family}{number}", "slope_post")
     put("nObsB", whole(b.loc[b["model"] == "B4", "n_obs"].iloc[0]))
     put("nObsF", whole(f.loc[f["model"] == "F4", "n_obs"].iloc[0]))
+    n_final, firms_final = float(a.iloc[7]["n_firm_years"]), float(a.iloc[7]["n_firms"])
+    put("nFirmsB", whole(b.loc[b["model"] == "B4", "n_firms"].iloc[0]))
+    put("nFirmsF", whole(f.loc[f["model"] == "F4", "n_firms"].iloc[0]))
+    put("nFirmsOnce", whole(firms_final - float(f.loc[f["model"] == "F4", "n_firms"].iloc[0])))
+    put("nObsOnce", whole(n_final - float(f.loc[f["model"] == "F4", "n_obs"].iloc[0])))
+    put("nObsCellOnce", whole(n_final - float(b.loc[b["model"] == "B4", "n_obs"].iloc[0])))
     put("rsqB", f"{float(b.loc[b['model'] == 'B4', 'r2'].iloc[0]):.3f}")
     put("rsqF", f"{float(f.loc[f['model'] == 'F4', 'r2'].iloc[0]):.3f}")
+    put("rsqBNo", f"{float(b.loc[b['model'] == 'BN', 'r2'].iloc[0]):.3f}")
+    put("rsqFNo", f"{float(f.loc[f['model'] == 'FN', 'r2'].iloc[0]):.3f}")
+    put("rsqWithinB", f"{float(b.loc[b['model'] == 'B4', 'r2_within'].iloc[0]):.3f}")
+    put("rsqWithinBNo", f"{float(b.loc[b['model'] == 'BN', 'r2_within'].iloc[0]):.3f}")
+    put("gapQ", f"{abs(float(m.loc['dv_tobin_q_w', 'mean_count1']) - float(m.loc['dv_tobin_q_w', 'mean_count0'])):.2f}")
     r = read("BRFV_T13_robustness")
     r["code"] = r["check"].str.split().str[0]
     words = {"R7": "Seven", "R9": "Nine", "R10": "Ten", "R1": "One"}
@@ -391,6 +578,50 @@ def numbers(table_attrition: pd.DataFrame) -> None:
                 put(f"coefR{word}{prefix}", rf"\ensuremath{{{float(row.iloc[0]['coef']):.3f}}}")
                 put(f"seR{word}{prefix}", f"{float(row.iloc[0]['se']):.3f}")
                 put(f"pvalR{word}{prefix}", f"{float(row.iloc[0]['p']):.3f}")
+    def family(stem: str, letter: str, last: int, shown: dict[tuple[str, str], str]) -> pd.DataFrame:
+        """Macros for one family of checks. shown maps (version, role) to the suffix of the macro name."""
+        table = checks(stem)
+        for index in range(last + 1):
+            part = table.loc[table["code"] == f"{letter}{index}"]
+            for (version, role), suffix in shown.items():
+                row = part.loc[(part["version"] == version) & (part["role"] == role)]
+                if len(row):
+                    name = f"{letter}{WORDS[index]}{suffix}"
+                    put("coef" + name, rf"\ensuremath{{{float(row.iloc[0]['coef']):.3f}}}")
+                    put("se" + name, f"{float(row.iloc[0]['se']):.3f}")
+                    put("pval" + name, f"{float(row.iloc[0]['p']):.3f}")
+            if len(part):
+                put(f"nObs{letter}{WORDS[index]}", whole(part.iloc[0]["n_obs"]))
+                put(f"nFirms{letter}{WORDS[index]}", whole(part.iloc[0]["n_firms"]))
+        return table
+
+    def tally(table: pd.DataFrame, codes: list[str], version: str, role: str, name: str) -> None:
+        """How many of the named checks give a negative coefficient, and how many a significant one."""
+        part = table.loc[table["code"].isin(codes) & (table["version"] == version) & (table["role"] == role)]
+        assert len(part) == len(codes), f"{name}: {len(part)} rows for {len(codes)} checks"
+        put("nNeg" + name, str(int((part["coef"] < 0).sum())))
+        put("nSig" + name, str(int(((part["coef"] < 0) & (part["p"] < 0.05)).sum())))
+        put("nWeak" + name, str(int(((part["coef"] < 0) & (part["p"] < 0.10)).sum())))
+
+    w = family("BRFV_T15_tone_within_firms_checks", "W", 10,
+               {("three scores", "negative"): "J", ("alone", "negative"): "A", ("three scores", "lead"): "LeadJ", ("alone", "lead"): "LeadA"})
+    tone_codes = [f"W{i}" for i in range(1, 9)]       # the sample and specification checks; W9 and W10 are read on their own
+    put("nChecksW", str(len(tone_codes)))
+    tally(w, tone_codes, "three scores", "negative", "WJ")
+    tally(w, tone_codes, "alone", "negative", "WA")
+    q = family("BRFV_T16_regulation_after_2021_checks", "P", 9,
+               {("one score", "score"): "Pre", ("one score", "interaction"): "Ix", ("one score", "slope_post"): "Slope",
+                ("three scores", "score"): "Pre", ("three scores", "interaction"): "Ix", ("three scores", "slope_post"): "Slope"})
+    later_codes = [f"P{i}" for i in range(1, 8)]
+    put("nChecksP", str(len(later_codes)))
+    tally(q, later_codes, "one score", "interaction", "PIx")
+    tally(q, later_codes, "one score", "slope_post", "PSlope")
+    c = pd.read_csv(cfg.DIR_TABLES / "BRFV_T17_score_correlations.csv")
+    score_names = {"bd_count_lag": "Count", "bd_negative_lag": "Neg", "bd_regulation_lag": "Reg"}
+    for _, row in c.iterrows():
+        pair = score_names[row["score_a"]] + score_names[row["score_b"]]
+        put("corr" + pair, rf"\ensuremath{{{float(row['corr_pooled']):.2f}}}")
+        put("corrIn" + pair, rf"\ensuremath{{{float(row['corr_within_firm_and_year']):.2f}}}")
     seven = r.loc[r["code"] == "R7"].iloc[0]
     put("nObsRSeven", whole(seven["n_obs"]))
     put("nFirmsRSeven", whole(seven["n_firms"]))
@@ -410,6 +641,11 @@ def numbers(table_attrition: pd.DataFrame) -> None:
     for name, code in (("pctEnergy", "1010"), ("pctUtilities", "5510"), ("pctMaterials", "1510")):
         put(name, f"{float(d.loc[d['ind_gics4'] == code, 'pct_count1'].iloc[0]):.1f}")
     put("pctTopThree", f"{100 * d.loc[d['ind_gics4'].isin(['1010', '5510', '1510']), 'k'].sum() / total:.0f}")
+    put("pctTransport", f"{float(d.loc[d['ind_gics4'] == '2030', 'pct_count1'].iloc[0]):.1f}")
+    high = d["high_exposure"].isin(["1.0", "1"])
+    put("nHighFY", whole(d.loc[high, "n"].sum()))
+    put("nHighFinFY", whole(d.loc[high & d["ind_gics4"].isin(cfg.GICS4_FINANCIAL), "n"].sum()))
+    put("nScoredFY", whole(d.loc[d["survey_score"] != "", "n"].sum()))
     put("pctMatched", f"{100 * float(a.iloc[6]['n_firm_years']) / float(a.iloc[5]['n_firm_years']):.0f}")
     t = read("BRFV_T03_year_alignment_test")["n_firms"].tolist()
     for name, i in (("entryZero", 0), ("entryOne", 1), ("exitZero", 2), ("exitOne", 3), ("nFirstRows", 4), ("nFirstFilled", 5),
@@ -439,9 +675,16 @@ def main() -> int:
     regression_table("BRFV_T11_industry_exposure", "tab_exposure")
     regression_table("BRFV_T12_after_kunming_declaration", "tab_event")
     robustness_table()
+    tone_checks_table()
+    later_checks_table()
     coefficient_figure()
     sample_flow(table_attrition)
-    numbers(table_attrition)
+    edgar = None
+    if cfg.RAW_EDGAR_CHECK.exists():
+        edgar = edgar_tables()
+    else:
+        log.info("no EDGAR check file: the tables on the score year are left out")
+    numbers(table_attrition, edgar)
     for figure in sorted(cfg.DIR_FIGURES.glob("BRFV_F0*.png")):
         shutil.copy2(figure, DIR_TEX_FIGURES / figure.name)
     log.info("LaTeX tables and figures written to %s", DIR_DRAFT)

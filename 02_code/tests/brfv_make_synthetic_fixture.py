@@ -145,7 +145,8 @@ def build_fixture(root: Path, seed: int = 20261118, convention: str = "fiscal", 
                                    "has_score_row": (year - 1) in count_by_year, "q_true": q_true})
 
     # Rows without a score, as in the real file: no CUSIP, no count, no regulation.
-    no_score = [(f"ZNOSC{k}", year, "", "", "0", "") for k in range(6) for year in range(2001, 2006)]
+    # Some rows without a score lie in the year 2000, as in the real file, so both rules claim them.
+    no_score = [(f"ZNOSC{k}", year, "", "", "0", "") for k in range(6) for year in range(2000, 2006)]
     score_rows += no_score
     scores = pd.DataFrame(score_rows, columns=["ticker", "year", "cusip", "count", "negative", "regulation"])
     scores = scores.sort_values(["ticker", "year"])
@@ -164,6 +165,7 @@ def build_fixture(root: Path, seed: int = 20261118, convention: str = "fiscal", 
         "n_score_rows_raw": len(scores),
         "n_no_score_rows": len(no_score),
         "n_year_2000_rows": int((scores["year"] == 2000).sum()),
+        "n_no_score_rows_in_2000": sum(1 for row in no_score if row[1] == 2000),
         "truth": pd.DataFrame(truth_rows),
         "raw_compustat": compustat,
     }

@@ -1,25 +1,22 @@
 # BRFV manuscript
 
-## Current draft
+## Last draft in this folder
 
-draft_complete_v2 is the current draft. It has the text, tables and figures of draft_complete_v1 and leaves out the author name, the date,
-the acknowledgements and the declaration on the use of generative AI. It gives the link to the public repository before the abstract.
-Step 08 writes into this folder, because it is named as DRAFT_CURRENT
-in 02_code/brfv_00_config.py. The file names were chosen by the author.
+draft_complete_v3 is the last draft in this folder. It is draft_complete_v2 with one addition, a column without controls at the start of Tables 8 and 9
+(models BN and FN), and the sentences in Sections 3.6 and 4.5 that describe and report it. Step 08 wrote into this folder until 23 November 2026.
+DRAFT_CURRENT in 02_code/brfv_00_config.py now names 06_final/draft_final_v5, and 06_final/BRFV_final_README.md describes the later drafts.
+The file names were chosen by the author.
 
 | File | What it is |
 | --- | --- |
-| draft_complete_v2/draft_complete_v2.tex | The manuscript. Prose, the two diagrams and the reference list |
-| draft_complete_v2/draft_complete_v2.pdf | The compiled draft, 32 pages |
-| draft_complete_v2/numbers.tex | Every number quoted in the text, as a macro. Written by step 08 |
-| draft_complete_v2/tables/*.tex | One tabular per table. Written by step 08 |
-| draft_complete_v2/figures/ | Copies of the pipeline figures and the sample flow chart. Written by step 08 |
+| draft_complete_v3/draft_complete_v3.tex | The manuscript. Prose, the two diagrams and the reference list |
+| draft_complete_v3/draft_complete_v3.pdf | The compiled draft, 32 pages |
+| draft_complete_v3/numbers.tex | Every number quoted in the text, as a macro. Written by step 08 |
+| draft_complete_v3/tables/*.tex | One tabular per table. Written by step 08 |
+| draft_complete_v3/figures/ | Copies of the pipeline figures and the sample flow chart. Written by step 08 |
 
-draft_complete_v1 has the same five parts and is kept as it was on 19 November 2026. Step 08 no longer writes into it.
-
-To rebuild after a new pipeline run: run 02_code/brfv_08_make_latex_assets.py (it is the last step of brfv_99_run_all.py), then compile with
-latexmk -pdf draft_complete_v2.tex inside the folder, or upload the folder to Overleaf. Tables and quoted numbers update on their own.
-The sentences that interpret the results do not, so read Sections 4 to 6 again after any rerun.
+draft_complete_v1 and draft_complete_v2 have the same five parts. The three drafts are kept as they were, and step 08 no longer writes into them.
+Each compiles from the files in its own folder, with latexmk -pdf and the name of its .tex file, or after an upload of the folder to Overleaf.
 
 ## Versions
 
@@ -28,11 +25,12 @@ The sentences that interpret the results do not, so read Sections 4 to 6 again a
 | Claude doc draft v1 | 2026-11-18 | Sections 1 to 3 and the score descriptives, written before the Compustat data arrived. No regression result. A private working document, superseded by draft_complete_v1 |
 | draft_complete_v1 | 2026-11-19 | Complete draft in LaTeX with all results, 13 tables in the text, 3 in the appendix and 6 figures |
 | draft_complete_v2 | 2026-11-19 | The same paper without the author name, the date, the acknowledgements and the declaration on the use of generative AI. The link to the public repository stands before the abstract. No other change to the text, the tables or the figures |
+| draft_complete_v3 | 2026-11-23 | draft_complete_v2 with a column without controls at the start of Tables 8 and 9 (models BN and FN). The column was added after the first results at the author's request and is read by rules stated before the run. 32 pages |
 
 Rule: a number enters the manuscript only from a file in 03_output/tables, through tables/*.tex or numbers.tex. Counts from the public score
 file that appear in sentences are protected by the comparison in step 01.
 
-## Manuscript numbering and pipeline files (both drafts)
+## Manuscript numbering and pipeline files (the drafts in this folder, BN and FN from draft_complete_v3 on)
 
 The manuscript numbers tables and figures in order of appearance. The pipeline identifiers (Tnn, Fnn) stay fixed.
 
@@ -45,8 +43,8 @@ The manuscript numbers tables and figures in order of appearance. The pipeline i
 | Table 5 | Summary statistics | tab_summary | BRFV_T05_summary_statistics |
 | Table 6 | Firm-years with and without a positive Count score | tab_means | BRFV_T06_means_by_disclosure |
 | Table 7 | Variation in the scores within the sample | tab_variation | BRFV_T14_identifying_variation |
-| Table 8 | Industry-by-year effects (B0 to B4) | tab_baseline | BRFV_T09_baseline_industry_year_fe |
-| Table 9 | Firm and year effects (F0 to F4) | tab_firm_effects | BRFV_T10_firm_fe |
+| Table 8 | Industry-by-year effects (BN, B0 to B4) | tab_baseline | BRFV_T09_baseline_industry_year_fe |
+| Table 9 | Firm and year effects (FN, F0 to F4) | tab_firm_effects | BRFV_T10_firm_fe |
 | Table 10 | High-exposure industries (X1 to X3) | tab_exposure | BRFV_T11_industry_exposure |
 | Table 11 | After the Kunming Declaration (E, EF, ED) | tab_event | BRFV_T12_after_kunming_declaration |
 | Table 12 | Robustness checks (R1 to R10) | tab_robustness | BRFV_T13_robustness |

@@ -7,7 +7,11 @@ Output  : 03_output/tables/BRFV_T05_summary_statistics.(csv|md)
           03_output/tables/BRFV_T07_correlations.(csv|md)
           03_output/tables/BRFV_T08_industry_distribution.(csv|md)
           03_output/tables/BRFV_T14_identifying_variation.(csv|md)
+          03_output/tables/BRFV_T17_score_correlations.(csv|md)
           03_output/figures/BRFV_F02_tobin_q_by_disclosure.png
+Note    : the CSV files hold the values as computed. They are rounded once, where
+          they are shown (four decimals in the Markdown copy, fewer in the draft),
+          so a figure is never rounded twice.
 """
 from __future__ import annotations
 
@@ -43,7 +47,7 @@ def summary_statistics(panel: pd.DataFrame) -> pd.DataFrame:
         s = panel[name].dropna()
         rows.append({"variable": name, "n": len(s), "mean": s.mean(), "sd": s.std(), "min": s.min(),
                      "p25": s.quantile(0.25), "median": s.median(), "p75": s.quantile(0.75), "max": s.max()})
-    return pd.DataFrame(rows).round(4)
+    return pd.DataFrame(rows)
 
 
 def means_by_disclosure(panel: pd.DataFrame) -> pd.DataFrame:
@@ -60,13 +64,39 @@ def means_by_disclosure(panel: pd.DataFrame) -> pd.DataFrame:
         rows.append({"variable": name, "mean_count1": a.mean(), "mean_count0": b.mean(),
                      "difference": a.mean() - b.mean(), "t_unadjusted": t_value, "p_normal": p_value,
                      "n_count1": len(a), "n_count0": len(b)})
-    return pd.DataFrame(rows).round(4)
+    return pd.DataFrame(rows)
 
 
 def correlations(panel: pd.DataFrame) -> pd.DataFrame:
     names = [cfg.DV_MAIN] + cfg.SCORES + cfg.CONTROLS
-    matrix = panel[names].corr().round(3)
+    matrix = panel[names].corr()
     return matrix.reset_index().rename(columns={"index": "variable"})
+
+
+def score_correlations(panel: pd.DataFrame) -> pd.DataFrame:
+    """Correlations among the three scores, pooled and within firms.
+
+    The within-firm figure removes the mean of each firm and of each fiscal year
+    from every score, which is the variation that a model with firm and year
+    effects uses. Firms with one firm-year have no such variation and are left out.
+    """
+    several = panel.groupby(cfg.ID_FIRM)[cfg.ID_FIRM].transform("size") > 1
+    kept = panel.loc[several, [cfg.ID_FIRM, cfg.T_FYEAR] + cfg.SCORES]
+    within = kept[cfg.SCORES].astype(float)
+    for _ in range(500):
+        before = within.to_numpy().copy()
+        within = within - within.groupby(kept[cfg.ID_FIRM]).transform("mean")
+        within = within - within.groupby(kept[cfg.T_FYEAR]).transform("mean")
+        if np.abs(within.to_numpy() - before).max() < 1e-12:
+            break
+    pooled, inside = panel[cfg.SCORES].corr(), within.corr()
+    rows = []
+    for i, first in enumerate(cfg.SCORES):
+        for second in cfg.SCORES[i + 1:]:
+            rows.append({"score_a": first, "score_b": second, "corr_pooled": pooled.loc[first, second],
+                         "corr_within_firm_and_year": inside.loc[first, second],
+                         "n_pooled": len(panel), "n_within": len(kept)})
+    return pd.DataFrame(rows)
 
 
 def industry_distribution(panel: pd.DataFrame) -> pd.DataFrame:
@@ -77,7 +107,7 @@ def industry_distribution(panel: pd.DataFrame) -> pd.DataFrame:
         mean_tobin_q=(cfg.DV_MAIN, "mean"),
         survey_score=("ind_bio_survey_avg", "first"), high_exposure=("ind_bio_high", "first"),
     ).reset_index()
-    return table.sort_values("survey_score", ascending=False).round(3)
+    return table.sort_values("survey_score", ascending=False)
 
 
 def make_figure(panel: pd.DataFrame):
@@ -140,6 +170,9 @@ def main() -> int:
     u.write_table(means_by_disclosure(panel), "BRFV_T06_means_by_disclosure",
                   note="Welch t statistic with a normal p-value. Firm-years are not independent, so read it as a description only.")
     u.write_table(correlations(panel), "BRFV_T07_correlations", note="Pearson correlations.")
+    u.write_table(score_correlations(panel), "BRFV_T17_score_correlations",
+                  note="Pearson correlations among the three scores. The within figure removes firm and fiscal-year means, "
+                       "on firms with at least two firm-years.")
     u.write_table(identifying_variation(panel), "BRFV_T14_identifying_variation",
                   note="Only a firm whose score changes over time identifies an estimate with firm fixed effects.")
     u.write_table(industry_distribution(panel), "BRFV_T08_industry_distribution",

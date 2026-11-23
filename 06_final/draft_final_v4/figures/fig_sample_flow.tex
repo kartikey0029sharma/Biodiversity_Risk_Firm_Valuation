@@ -1,0 +1,27 @@
+\begin{tikzpicture}[node distance=5.5mm, every node/.style={font=\small},
+  stage/.style={draw=black!55, fill=blue!6, rounded corners=2pt, text width=9.6cm, align=left, inner sep=5pt, execute at begin node={\hyphenpenalty=10000\exhyphenpenalty=10000}},
+  removed/.style={text width=3.9cm, align=left, text=black!70, font=\footnotesize},
+  flow/.style={-{Latex[length=2.2mm]}, draw=black!60}]
+\node[stage] (s0)  {Compustat firm-years for fiscal years 2015 to 2024\\ \textbf{119,414} firm-years, 19,383 firms};
+\node[stage] (s1) [below=of s0] {Incorporated in the United States\\ \textbf{83,721} firm-years, 13,775 firms};
+\draw[flow] (s0) -- (s1);
+\node[removed, right=4mm of s1] {35,693 firm-years removed};
+\node[stage] (s2) [below=of s1] {Reporting in US dollars\\ \textbf{83,589} firm-years, 13,761 firms};
+\draw[flow] (s1) -- (s2);
+\node[removed, right=4mm of s2] {132 firm-years removed};
+\node[stage] (s3) [below=of s2] {Non-financial firms\\ \textbf{42,340} firm-years, 6,554 firms};
+\draw[flow] (s2) -- (s3);
+\node[removed, right=4mm of s3] {41,249 firm-years removed};
+\node[stage] (s4) [below=of s3] {Total assets, book equity and market value available\\ \textbf{36,299} firm-years, 6,020 firms};
+\draw[flow] (s3) -- (s4);
+\node[removed, right=4mm of s4] {6,041 firm-years removed};
+\node[stage] (s5) [below=of s4] {GICS industry group available\\ \textbf{35,957} firm-years, 5,841 firms};
+\draw[flow] (s4) -- (s5);
+\node[removed, right=4mm of s5] {342 firm-years removed};
+\node[stage] (s6) [below=of s5] {Matched to a 10-K biodiversity score of the previous year\\ \textbf{17,383} firm-years, 2,904 firms};
+\draw[flow] (s5) -- (s6);
+\node[removed, right=4mm of s6] {18,574 firm-years removed};
+\node[stage] (s7) [below=of s6] {All control variables available\\ \textbf{16,808} firm-years, 2,774 firms};
+\draw[flow] (s6) -- (s7);
+\node[removed, right=4mm of s7] {575 firm-years removed};
+\end{tikzpicture}

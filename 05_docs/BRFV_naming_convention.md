@@ -18,6 +18,7 @@ Two digits, an underscore, then a lower-case noun. The number is the order of th
 | 02_code | scripts and tests |
 | 03_output/tables, figures, logs | everything the code writes for the paper |
 | 04_manuscript | drafts and exports |
+| 06_final | final drafts in the pattern of the dissertation handbook (versions 4 and 5) |
 | 05_docs | documentation |
 
 ## Files
@@ -37,7 +38,7 @@ Two digits, an underscore, then a lower-case noun. The number is the order of th
 | Run manifest | BRFV_run_manifest_runid.json | |
 | Document | BRFV_content.md or .csv | BRFV_data_dictionary.csv |
 | Dated snapshot | BRFV_content_vNN_YYYYMMDD.ext | BRFV_manuscript_v01_20261118.docx |
-| Manuscript draft | name given by the author, in its own folder under 04_manuscript. The current draft is named in DRAFT_CURRENT of brfv_00_config.py, and earlier drafts are kept as they were | draft_complete_v2/draft_complete_v2.tex |
+| Manuscript draft | name given by the author, in its own folder under 04_manuscript or 06_final. The current draft is named in DRAFT_CURRENT of brfv_00_config.py, and earlier drafts are kept as they were | draft_final_v5/draft_final_v5.tex |
 | LaTeX table fragment | tab_content.tex, written by step 08 | tab_baseline.tex |
 
 Rules: lower case with underscores for code and data; no spaces; dates as YYYYMMDD; versions as v01, v02. The numbers in Tnn and Fnn are pipeline identifiers: they follow the order in which the code writes the files, they stay fixed, and they are never reused. The manuscript numbers its tables and figures in order of appearance, which can change with every revision. The link between the two is kept in 04_manuscript/BRFV_manuscript_README.md.
@@ -66,7 +67,7 @@ snake_case, with a prefix that says what kind of variable it is and a suffix tha
 | --- | --- |
 | _lag | the value known before Tobin's Q is measured |
 | _lead | the value disclosed two fiscal years later (placebo only) |
-| _alt | the score of the next score year, used only in robustness check R10 (the other reading of the score year) |
+| _alt | the score of the same year as the fiscal year (score year t in place of t-1). Used in checks R10, W10 and P8. With the year of the score file read as the year of filing, it is the most recent 10-K for a firm with a December year end |
 | _w | winsorised at the 1st and 99th percentiles |
 | _pos | indicator that the base variable is above zero |
 | _z | standardised |
@@ -80,11 +81,18 @@ Suffixes stack in the order transform then timing then winsorising, for example 
 | --- | --- |
 | B0 to B5 | baseline, industry group by year fixed effects (Table T09) |
 | F0 to F5 | firm and year fixed effects (Table T10) |
+| BN, FN | the three scores with the fixed effects and without the controls, on the firm-years of B4 and F4. First column of Tables T09 and T10. Added on 23 November 2026, after the first results |
 | X1 to X3 | score times high-exposure industry (Table T11) |
 | E1 to E3, EF1 to EF3, ED1 to ED3 | score times the period after October 2021 (Table T12). EF = firm and year effects. ED = models E without the transition fiscal year 2021 |
 | R1 to R10 | robustness checks (Table T13) |
+| W0 to W10 | checks on the within-firm coefficient on Negative, with the three scores together and alone (Table T15). Added on 23 November 2026, after the first results |
+| P0 to P9 | checks on the interaction of Regulation with the period from fiscal year 2022 (Table T16). Added on 23 November 2026, after the first results |
 
-Within a family, 1 = count, 2 = negative, 3 = regulation, 4 = all three, 5 = all three plus climate exposure.
+Within a family, 1 = count, 2 = negative, 3 = regulation, 4 = all three, 5 = all three plus climate exposure. This holds for B, F, X, E, EF and ED. In W, P and R the number is the number of the check.
+
+The term slope_post in Tables T12 and T16 is the coefficient on a score plus the coefficient on its interaction with the later period, with its own standard error.
+
+Tables added on 23 November 2026: T15 and T16 (the checks above), T17 (correlations among the three scores, pooled and within firms). The check of the score year against EDGAR has no T number, because its file is raw data collected by hand: 01_data/raw/edgar/BRFV_edgar_timing_check_20261123.csv.
 
 The letter H is not used for models. H1 to H4 are the hypotheses in the manuscript: H1 negative tone, H2 regulation, H3 high-exposure industries, H4 the period after October 2021.
 

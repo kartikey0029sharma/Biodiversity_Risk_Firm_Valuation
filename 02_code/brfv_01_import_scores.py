@@ -100,6 +100,11 @@ def clean_scores(raw: pd.DataFrame) -> tuple[pd.DataFrame, dict]:
     no_score = frame["count"] == ""
     audit["rows_without_score"] = int(no_score.sum())
     audit["rows_without_score_and_cusip"] = int((no_score & (frame["cusip"] == "")).sum())
+    # Counted on the raw file, so that the two rules can be reconciled with the row counts:
+    # a row without a score that also lies before the coverage is removed once, not twice.
+    year_raw = frame["year"].astype(int)
+    audit["rows_before_coverage_raw"] = int((year_raw < cfg.SCORE_YEAR_MIN).sum())
+    audit["rows_without_score_before_coverage"] = int((no_score & (year_raw < cfg.SCORE_YEAR_MIN)).sum())
     frame = frame.loc[~no_score].copy()
 
     # Rule 2: years before the stated coverage are dropped.
@@ -135,6 +140,9 @@ def clean_scores(raw: pd.DataFrame) -> tuple[pd.DataFrame, dict]:
             "bd_count", "bd_negative", "bd_regulation", "bd_negative_pos"]
     frame = frame[keep].sort_values(["id_ticker", "t_score_year"]).reset_index(drop=True)
     audit["rows_clean"] = len(frame)
+    removed = audit["rows_without_score"] + audit["rows_before_coverage_raw"] - audit["rows_without_score_before_coverage"]
+    if audit["rows_raw"] - removed != audit["rows_clean"]:
+        raise ValueError("the rows removed by the two rules do not add up to the difference between the raw and the clean file")
     audit["tickers_clean"] = int(frame["id_ticker"].nunique())
     return frame, audit
 

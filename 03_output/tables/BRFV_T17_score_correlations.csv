@@ -1,0 +1,4 @@
+score_a,score_b,corr_pooled,corr_within_firm_and_year,n_pooled,n_within
+bd_count_lag,bd_negative_lag,0.38937846158553135,0.18449713072848212,16808,16498
+bd_count_lag,bd_regulation_lag,0.8663184125688728,0.7534856502061829,16808,16498
+bd_negative_lag,bd_regulation_lag,0.4828537164272711,0.27065480056063984,16808,16498

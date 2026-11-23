@@ -13,6 +13,11 @@ Timing  : the score attached to fiscal year t is the latest one that was public
           before Tobin's Q is measured. Under the "fiscal" convention this is
           the score labelled t-1; under "filing" it is the score labelled t.
           The convention is set in brfv_00_config.py and tested here.
+Note    : 23 November 2026. A check of filings on EDGAR indicates that the year in the
+          score file is the year of filing, and that the last row of a firm can be empty
+          although a 10-K was filed in that year. The test below is kept and its counts
+          are reported, but the paper does not rely on its verdict. See the note at
+          SCORE_YEAR_CONVENTION in brfv_00_config.py. No logic was changed.
 """
 from __future__ import annotations
 

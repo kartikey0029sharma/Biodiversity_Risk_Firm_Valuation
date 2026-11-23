@@ -14,11 +14,13 @@
 |  |  |  | (0.0803) |  |  | (0.0508) |  |  | (0.0734) |
 | ix_regulation_post |  |  | -0.1748** |  |  | 0.0271 |  |  | -0.2010** |
 |  |  |  | (0.0883) |  |  | (0.0683) |  |  | (0.0970) |
+| slope_post | -0.0796 | -0.0471 | -0.1794 | 0.0495 | -0.0990** | 0.0463 | -0.0830 | -0.0485 | -0.1807 |
+|  | (0.1080) | (0.0617) | (0.1150) | (0.0628) | (0.0441) | (0.0651) | (0.1074) | (0.0617) | (0.1145) |
 | Controls | yes | yes | yes | yes | yes | yes | yes | yes | yes |
 | Fixed effects | industry group x year | industry group x year | industry group x year | firm, year | firm, year | firm, year | industry group x year | industry group x year | industry group x year |
 | Firm-years | 16,805 | 16,805 | 16,805 | 16,498 | 16,498 | 16,498 | 15,077 | 15,077 | 15,077 |
-| Firms | 2,774 | 2,774 | 2,774 | 2,774 | 2,774 | 2,774 | 2,753 | 2,753 | 2,753 |
+| Firms | 2,772 | 2,772 | 2,772 | 2,464 | 2,464 | 2,464 | 2,751 | 2,751 | 2,751 |
 | R-squared | 0.375 | 0.375 | 0.375 | 0.789 | 0.789 | 0.789 | 0.379 | 0.379 | 0.379 |
 | Within R-squared | 0.229 | 0.229 | 0.229 | 0.092 | 0.092 | 0.092 | 0.237 | 0.237 | 0.237 |
 
-Dependent variable: Tobin's Q, winsorised. ix_*_post is the score times an indicator for fiscal years from 2022; the indicator itself is absorbed by the year effects. Models E use industry group by year effects, models EF firm and year effects. Models ED repeat models E without fiscal year 2021, in which firms with a December year end are valued after the declaration although the year counts as before it. Standard errors clustered by firm in parentheses. * p<0.10, ** p<0.05, *** p<0.01.
+Dependent variable: Tobin's Q, winsorised. ix_*_post is the score times an indicator for fiscal years from 2022; the indicator itself is absorbed by the year effects. Models E use industry group by year effects, models EF firm and year effects. slope_post is the coefficient on the score plus the coefficient on its interaction, which is the slope from fiscal year 2022, with its own standard error. Models ED repeat models E without fiscal year 2021, in which firms with a December year end are valued after the declaration although the year counts as before it. Standard errors clustered by firm in parentheses. * p<0.10, ** p<0.05, *** p<0.01.

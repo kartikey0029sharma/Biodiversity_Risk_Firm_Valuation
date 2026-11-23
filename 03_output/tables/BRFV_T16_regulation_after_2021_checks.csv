@@ -1,0 +1,31 @@
+check,version,role,term,coef,se,p,n_obs,n_firms,dep_var,fixed_effects,cluster,stars
+P0 main estimate,one score,score,bd_regulation_lag,-0.004641225215635573,0.08029605489349519,0.9539109823836542,16805,2772,dv_tobin_q_w,fe_ind_year,id_gvkey,
+P0 main estimate,one score,interaction,ix_regulation_post,-0.17478223098252946,0.08827609524860228,0.047807961609545924,16805,2772,dv_tobin_q_w,fe_ind_year,id_gvkey,**
+P0 main estimate,one score,slope_post,slope_post,-0.17942345619816513,0.11503053508414222,0.11892375496237606,16805,2772,dv_tobin_q_w,fe_ind_year,id_gvkey,
+P1 log Tobin's Q,one score,score,bd_regulation_lag,-0.018578261873287975,0.03176489839876586,0.5586843217495545,16805,2772,dv_ln_tobin_q_w,fe_ind_year,id_gvkey,
+P1 log Tobin's Q,one score,interaction,ix_regulation_post,-0.08349153206758551,0.03688643997356648,0.023683464688742273,16805,2772,dv_ln_tobin_q_w,fe_ind_year,id_gvkey,**
+P1 log Tobin's Q,one score,slope_post,slope_post,-0.10206979394087347,0.03904436011652128,0.008992072848157395,16805,2772,dv_ln_tobin_q_w,fe_ind_year,id_gvkey,***
+"P2 industry-adjusted Q, year effects",one score,score,bd_regulation_lag,0.11812948279016303,0.08723154175149396,0.17578098556063182,16808,2774,dv_tobin_q_indadj,t_fyear,id_gvkey,
+"P2 industry-adjusted Q, year effects",one score,interaction,ix_regulation_post,-0.5000285521202956,0.09393361787240731,1.1010187050963793e-07,16808,2774,dv_tobin_q_indadj,t_fyear,id_gvkey,***
+"P2 industry-adjusted Q, year effects",one score,slope_post,slope_post,-0.3818990693301327,0.11753615567302514,0.001171102833984028,16808,2774,dv_tobin_q_indadj,t_fyear,id_gvkey,***
+P3 utilities excluded,one score,score,bd_regulation_lag,0.006008537473871123,0.10593351467329179,0.9547725407753027,16147,2691,dv_tobin_q_w,fe_ind_year,id_gvkey,
+P3 utilities excluded,one score,interaction,ix_regulation_post,-0.21566744512139716,0.1091990710295796,0.048370991670930064,16147,2691,dv_tobin_q_w,fe_ind_year,id_gvkey,**
+P3 utilities excluded,one score,slope_post,slope_post,-0.20965890764752598,0.14241913816432597,0.14110385300017114,16147,2691,dv_tobin_q_w,fe_ind_year,id_gvkey,
+P4 fiscal year 2020 excluded,one score,score,bd_regulation_lag,-0.015328791313887714,0.0753375761344355,0.8387841822269801,15189,2764,dv_tobin_q_w,fe_ind_year,id_gvkey,
+P4 fiscal year 2020 excluded,one score,interaction,ix_regulation_post,-0.1620154758015412,0.08879900570921183,0.0681815832481063,15189,2764,dv_tobin_q_w,fe_ind_year,id_gvkey,*
+P4 fiscal year 2020 excluded,one score,slope_post,slope_post,-0.17734426711542892,0.11353803972673762,0.11840697371349118,15189,2764,dv_tobin_q_w,fe_ind_year,id_gvkey,
+P5 December year ends only,one score,score,bd_regulation_lag,-0.03335229373772922,0.08278016874169221,0.6870605626865718,12494,2142,dv_tobin_q_w,fe_ind_year,id_gvkey,
+P5 December year ends only,one score,interaction,ix_regulation_post,-0.1274661952785869,0.09022113535836512,0.15785410079500428,12494,2142,dv_tobin_q_w,fe_ind_year,id_gvkey,
+P5 December year ends only,one score,slope_post,slope_post,-0.1608184890163161,0.12414232515050791,0.19530937634082113,12494,2142,dv_tobin_q_w,fe_ind_year,id_gvkey,
+P6 CUSIP matches only,one score,score,bd_regulation_lag,0.010833871088833965,0.08125798055473271,0.8939450238228408,16330,2648,dv_tobin_q_w,fe_ind_year,id_gvkey,
+P6 CUSIP matches only,one score,interaction,ix_regulation_post,-0.18626647852203226,0.09221289720413087,0.04348796791583465,16330,2648,dv_tobin_q_w,fe_ind_year,id_gvkey,**
+P6 CUSIP matches only,one score,slope_post,slope_post,-0.17543260743319825,0.11862117155852674,0.13927756537714342,16330,2648,dv_tobin_q_w,fe_ind_year,id_gvkey,
+P7 clustered by industry group,one score,score,bd_regulation_lag,-0.004641225215635573,0.07180110893444616,0.9490720023967492,16805,2772,dv_tobin_q_w,fe_ind_year,ind_gics4,
+P7 clustered by industry group,one score,interaction,ix_regulation_post,-0.17478223098252946,0.08889730272324074,0.06264417391293176,16805,2772,dv_tobin_q_w,fe_ind_year,ind_gics4,*
+P7 clustered by industry group,one score,slope_post,slope_post,-0.17942345619816513,0.1058480621471571,0.1048342954703978,16805,2772,dv_tobin_q_w,fe_ind_year,ind_gics4,
+P8 other timing: score of the next score year,one score,score,bd_regulation_alt,-0.01696439897684423,0.08585846069577062,0.8433847036773248,14486,2603,dv_tobin_q_w,fe_ind_year,id_gvkey,
+P8 other timing: score of the next score year,one score,interaction,ix_regulation_alt_post,-0.20002764177095253,0.09318398609105313,0.03191827302961525,14486,2603,dv_tobin_q_w,fe_ind_year,id_gvkey,**
+P8 other timing: score of the next score year,one score,slope_post,slope_post,-0.21699204074779677,0.12642787024588958,0.08622054808643642,14486,2603,dv_tobin_q_w,fe_ind_year,id_gvkey,*
+P9 three scores and their interactions together,three scores,score,bd_regulation_lag,0.035427816044949025,0.13779892493866774,0.797122276672535,16805,2772,dv_tobin_q_w,fe_ind_year,id_gvkey,
+P9 three scores and their interactions together,three scores,interaction,ix_regulation_post,-0.35768072768101206,0.20228544152386788,0.07713781094646444,16805,2772,dv_tobin_q_w,fe_ind_year,id_gvkey,*
+P9 three scores and their interactions together,three scores,slope_post,slope_post_regulation,-0.322252911636063,0.22523397315329496,0.15261539160544846,16805,2772,dv_tobin_q_w,fe_ind_year,id_gvkey,

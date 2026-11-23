@@ -19,6 +19,7 @@ DIR_RAW = PROJECT_ROOT / "01_data" / "raw"
 DIR_RAW_GIGLIO = DIR_RAW / "giglio"
 DIR_RAW_COMPUSTAT = DIR_RAW / "compustat"
 DIR_RAW_CLIMATE = DIR_RAW / "climate"
+DIR_RAW_EDGAR = DIR_RAW / "edgar"
 DIR_INTERIM = PROJECT_ROOT / "01_data" / "interim"
 DIR_PROCESSED = PROJECT_ROOT / "01_data" / "processed"
 DIR_TABLES = PROJECT_ROOT / "03_output" / "tables"
@@ -27,9 +28,9 @@ DIR_LOGS = PROJECT_ROOT / "03_output" / "logs"
 DIR_EXPECTED = Path(__file__).resolve().parent / "tests" / "expected"
 
 # The draft that step 08 writes its tables, figures and quoted numbers into.
-# Earlier drafts in 04_manuscript are kept as they were and are not rewritten.
-DRAFT_CURRENT = "draft_complete_v2"
-DIR_DRAFT = PROJECT_ROOT / "04_manuscript" / DRAFT_CURRENT
+# Earlier drafts in 04_manuscript and 06_final are kept as they were and are not rewritten.
+DRAFT_CURRENT = "draft_final_v5"
+DIR_DRAFT = PROJECT_ROOT / "06_final" / DRAFT_CURRENT
 
 ALL_DIRS = [
     DIR_RAW_GIGLIO, DIR_RAW_COMPUSTAT, DIR_RAW_CLIMATE, DIR_INTERIM,
@@ -50,6 +51,9 @@ GIGLIO_ZIP_PATTERN = "BRFV_giglio_raw_*.zip"
 RAW_COMPUSTAT = DIR_RAW_COMPUSTAT / "BRFV_compustat_funda_raw.csv"
 # Optional: firm-level climate change exposure (Sautner et al., 2023).
 RAW_CLIMATE = DIR_RAW_CLIMATE / "BRFV_climate_exposure_raw.csv"
+# Filing dates and counts of sentences with a biodiversity word, read from EDGAR (public) on
+# 23 November 2026 to check what the year in the score file means. See the README beside the file.
+RAW_EDGAR_CHECK = DIR_RAW_EDGAR / "BRFV_edgar_timing_check_20261123.csv"
 
 # SHA-256 of the files as downloaded from https://www.biodiversityrisk.org/download/
 # on 18 November 2026. A different hash means the authors have updated the file:
@@ -83,6 +87,15 @@ SCORE_YEAR_MAX_ALL = 2024
 #   "filing": year = calendar year the 10-K was filed. The score for year t is
 #             attached to Tobin's Q measured at the end of fiscal year t.
 # Step 04 tests this on newly listed firms and stops if the data disagree.
+#
+# Note of 23 November 2026. A check of filings on EDGAR (01_data/raw/edgar) indicates that the
+# year is the calendar year of filing. The test in step 04 reads an empty row in the last year
+# of a firm as a year without a filing, and the check shows that such a row can be empty although
+# a 10-K was filed, so the paper no longer relies on its verdict. The setting is kept as it was,
+# because it fixes which score the models use and no estimate should move: the score labelled
+# t-1 is attached to Tobin's Q at the end of fiscal year t. Read by filing year, this is the 10-K
+# filed in the previous calendar year. The score labelled t (suffix _alt in the panel) is then the
+# latest filing for a firm with a December year end, and it is used in checks R10, W10 and P8.
 SCORE_YEAR_CONVENTION = "fiscal"
 
 # Fiscal years in which Tobin's Q is measured.

@@ -1,0 +1,25 @@
+check,version,role,term,coef,se,p,n_obs,n_firms,dep_var,fixed_effects,cluster,stars
+W0 main estimate,three scores,negative,bd_negative_lag,-0.06290140680003559,0.02946133185341638,0.032855370991390354,16498,2464,dv_tobin_q_w,id_gvkey + t_fyear,id_gvkey,**
+W0 main estimate,alone,negative,bd_negative_lag,-0.053332317436752895,0.028203780887175914,0.05874648744064026,16498,2464,dv_tobin_q_w,id_gvkey + t_fyear,id_gvkey,*
+W1 log Tobin's Q,three scores,negative,bd_negative_lag,-0.02771156827222188,0.012171251455276135,0.022883286772265254,16498,2464,dv_ln_tobin_q_w,id_gvkey + t_fyear,id_gvkey,**
+W1 log Tobin's Q,alone,negative,bd_negative_lag,-0.02501281014065947,0.012080952058171604,0.0385157256232318,16498,2464,dv_ln_tobin_q_w,id_gvkey + t_fyear,id_gvkey,**
+W2 firm effects and industry group by year effects,three scores,negative,bd_negative_lag,-0.019877468817591185,0.02743879029951293,0.4688709363486021,16496,2463,dv_tobin_q_w,id_gvkey + fe_ind_year,id_gvkey,
+W2 firm effects and industry group by year effects,alone,negative,bd_negative_lag,-0.010302106849167209,0.02706080766262915,0.7034571398799692,16496,2463,dv_tobin_q_w,id_gvkey + fe_ind_year,id_gvkey,
+W3 utilities excluded,three scores,negative,bd_negative_lag,-0.06069202904592332,0.03372657751567443,0.07206098612028211,15844,2387,dv_tobin_q_w,id_gvkey + t_fyear,id_gvkey,*
+W3 utilities excluded,alone,negative,bd_negative_lag,-0.05116022030566621,0.03176338553703361,0.10738470761470564,15844,2387,dv_tobin_q_w,id_gvkey + t_fyear,id_gvkey,
+W4 fiscal year 2020 excluded,three scores,negative,bd_negative_lag,-0.0692703338277755,0.033188981879862814,0.03697820612988023,14868,2442,dv_tobin_q_w,id_gvkey + t_fyear,id_gvkey,**
+W4 fiscal year 2020 excluded,alone,negative,bd_negative_lag,-0.0635391956041279,0.03221358628242664,0.04867270472269336,14868,2442,dv_tobin_q_w,id_gvkey + t_fyear,id_gvkey,**
+W5 December year ends only,three scores,negative,bd_negative_lag,-0.07543507963411394,0.029974651204490412,0.011930716993060475,12240,1887,dv_tobin_q_w,id_gvkey + t_fyear,id_gvkey,**
+W5 December year ends only,alone,negative,bd_negative_lag,-0.06421714486824401,0.028102234737562876,0.022416002068605057,12240,1887,dv_tobin_q_w,id_gvkey + t_fyear,id_gvkey,**
+W6 CUSIP matches only,three scores,negative,bd_negative_lag,-0.0651040420999605,0.029774365547267218,0.028870978122100377,16046,2363,dv_tobin_q_w,id_gvkey + t_fyear,id_gvkey,**
+W6 CUSIP matches only,alone,negative,bd_negative_lag,-0.055559505204326017,0.028507270516722697,0.05141854097717391,16046,2363,dv_tobin_q_w,id_gvkey + t_fyear,id_gvkey,*
+W7 ever-disclosing firms,three scores,negative,bd_negative_lag,-0.08286742435116477,0.02460536850689839,0.000892261429629837,1691,224,dv_tobin_q_w,id_gvkey + t_fyear,id_gvkey,***
+W7 ever-disclosing firms,alone,negative,bd_negative_lag,-0.07751608537825842,0.022652568568929814,0.0007395018071849613,1691,224,dv_tobin_q_w,id_gvkey + t_fyear,id_gvkey,***
+W8 clustered by industry group,three scores,negative,bd_negative_lag,-0.06290140680003559,0.01901973024748324,0.003207078299421573,16498,2464,dv_tobin_q_w,id_gvkey + t_fyear,ind_gics4,***
+W8 clustered by industry group,alone,negative,bd_negative_lag,-0.053332317436752895,0.013909960088834954,0.0009031142300821582,16498,2464,dv_tobin_q_w,id_gvkey + t_fyear,ind_gics4,***
+W9 lead: Negative two years ahead added,three scores,lead,bd_negative_lead,0.02465647481532905,0.0341531543652176,0.47042662448627626,10924,1791,dv_tobin_q_w,id_gvkey + t_fyear,id_gvkey,
+W9 lead: Negative two years ahead added,three scores,negative,bd_negative_lag,-0.08730393199827308,0.04097014879263573,0.03323202968553529,10924,1791,dv_tobin_q_w,id_gvkey + t_fyear,id_gvkey,**
+W9 lead: Negative two years ahead added,alone,lead,bd_negative_lead,0.026378006764410843,0.034212734838927075,0.44080889169094517,10924,1791,dv_tobin_q_w,id_gvkey + t_fyear,id_gvkey,
+W9 lead: Negative two years ahead added,alone,negative,bd_negative_lag,-0.06522809956801273,0.037590038234120215,0.0828687094733429,10924,1791,dv_tobin_q_w,id_gvkey + t_fyear,id_gvkey,*
+W10 other timing: score of the next score year,three scores,negative,bd_negative_alt,0.006149454486521552,0.032352429347029275,0.849265670624189,14165,2281,dv_tobin_q_w,id_gvkey + t_fyear,id_gvkey,
+W10 other timing: score of the next score year,alone,negative,bd_negative_alt,0.015156259732539888,0.031942426374915456,0.635198247344305,14165,2281,dv_tobin_q_w,id_gvkey + t_fyear,id_gvkey,
